@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongodbConfig } from './config/mongodbConfig';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -15,8 +16,8 @@ import { mongodbConfig } from './config/mongodbConfig';
       useFactory: mongodbConfig,
       inject: [ConfigService]
     }),
+
+    UserModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule { }
