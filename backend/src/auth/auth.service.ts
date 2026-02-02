@@ -2,6 +2,7 @@ import { HttpException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
 import * as bcrypt from 'bcrypt'
 
 @Injectable()
@@ -11,12 +12,11 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
-    private async createToken(user: { _id?: unknown; id?: unknown; email?: string; username?: string }) {
-        const subject = (user?._id ?? user?.id) as { toString?: () => string } | undefined;
+    private async createToken(user: any) {
         const payload = {
-            sub: subject?.toString ? subject.toString() : subject,
-            email: user?.email,
-            username: user?.username,
+            sub: String(user._id || user.id),
+            email: user.email,
+            username: user.username,
         };
 
         return this.jwtService.signAsync(payload);
@@ -24,10 +24,9 @@ export class AuthService {
 
     async register(registerDTO: RegisterDto) {
         const { password, confirmPassword, ...rest } = registerDTO;
-        const user = await this.userService.findByEmail(registerDTO.email);
-        const userExists = Array.isArray(user) ? user.length > 0 : Boolean(user);
+        const user = await this.userService.findByEmail(registerDTO.email);;
 
-        if (userExists) throw new HttpException("email already exist", 409);
+        if (user) throw new HttpException("email already exist", 409);
         if (password !== confirmPassword) throw new HttpException("password and confirm password not matched", 400);
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -37,12 +36,32 @@ export class AuthService {
         };
 
         const createdUser = await this.userService.create(newUser);
-        const accessToken = await this.createToken(createdUser as { _id?: unknown; id?: unknown; email?: string; username?: string });
+        const accessToken = await this.createToken(createdUser);
 
         return { user: createdUser, accessToken };
     }
 
-    async login() {
+    async login(loginDto: LoginDto) {
+        const user = await this.userService.findByEmail(loginDto.email);
 
+        if (!user || user.length === 0) throw new HttpException("Invalid credentials", 401);
+
+        const isPasswordValid = await bcrypt.compare(loginDto.password, user[0].password);
+
+        if (!isPasswordValid) throw new HttpException("Invalid credentials", 401);
+
+        const accessToken = await this.createToken(user[0]);
+
+        return { user: user[0], accessToken };
+    }
+
+    async getCurrentUser(user: any) {
+        if (!user || !user.sub) throw new HttpException("Unauthorized", 401);
+
+        const userData = await this.userService.findOne(user.sub);
+
+        if (!userData) throw new HttpException("User not found", 404);
+
+        return userData;
     }
 }
