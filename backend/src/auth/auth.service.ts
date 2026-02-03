@@ -26,7 +26,7 @@ export class AuthService {
         const { password, confirmPassword, ...rest } = registerDTO;
         const user = await this.userService.findByEmail(registerDTO.email);;
 
-        if (user) throw new HttpException("email already exist", 409);
+        if (user && user.length > 0) throw new HttpException("email already exist", 409);
         if (password !== confirmPassword) throw new HttpException("password and confirm password not matched", 400);
 
         const hashedPassword = await bcrypt.hash(password, 10)
