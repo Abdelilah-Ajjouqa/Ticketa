@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common"
 import { RegisterDto } from "./dto/register.dto";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
-import { AuthGuard } from "./guard/auth.guard";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('auth')
 export class AuthController {
@@ -21,7 +21,7 @@ export class AuthController {
     }
 
     @Get('me')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard('jwt'))
     async getCurrentUser(@Request() req: any) {
         console.log(req.user);
         return await this.authService.getCurrentUser(req.user);

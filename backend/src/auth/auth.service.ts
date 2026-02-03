@@ -43,11 +43,9 @@ export class AuthService {
 
     async login(loginDto: LoginDto) {
         const user = await this.userService.findByEmail(loginDto.email);
-
         if (!user) throw new HttpException("Invalid credentials", 401);
 
         const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
-
         if (!isPasswordValid) throw new HttpException("Invalid credentials", 401);
 
         const accessToken = await this.createToken(user);
@@ -56,9 +54,9 @@ export class AuthService {
     }
 
     async getCurrentUser(user: any) {
-        if (!user || !user.sub) throw new HttpException("Unauthorized", 401);
+        if (!user) throw new HttpException("Unauthorized", 401);
 
-        const userData = await this.userService.findOne(user.sub);
+        const userData = await this.userService.findOne(user.userId);
 
         if (!userData) throw new HttpException("User not found", 404);
 
