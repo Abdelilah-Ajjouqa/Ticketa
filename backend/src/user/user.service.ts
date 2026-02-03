@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    return await this.usermodel.find({ email: email });
+    return await this.usermodel.findOne({ email: email });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

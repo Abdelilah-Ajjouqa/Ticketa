@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Request } from "@nestjs/common";
+import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
+import { AuthGuard } from "./guard/auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -11,26 +12,18 @@ export class AuthController {
 
     @Post('register')
     async register(@Body() registerDto: RegisterDto) {
-        try {
-            return await this.authService.register(registerDto);
-        } catch (error) {
-            throw new Error(`error, cannot register: ${error}`);
-        }
+        return await this.authService.register(registerDto);
     }
 
     @Post('login')
     async login(@Body() loginDto: LoginDto) {
-        try {
-            return await this.authService.login(loginDto);
-        } catch (error) {
-            throw new Error(`error, cannot login: ${error}`)
-        }
+        return await this.authService.login(loginDto);
     }
 
     @Get('me')
+    @UseGuards(AuthGuard)
     async getCurrentUser(@Request() req: any) {
         console.log(req.user);
-        
         return await this.authService.getCurrentUser(req.user);
     }
 }

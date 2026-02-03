@@ -26,7 +26,7 @@ export class AuthService {
         const { password, confirmPassword, ...rest } = registerDTO;
         const user = await this.userService.findByEmail(registerDTO.email);;
 
-        if (user && user.length > 0) throw new HttpException("email already exist", 409);
+        if (user) throw new HttpException("email already exist", 409);
         if (password !== confirmPassword) throw new HttpException("password and confirm password not matched", 400);
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -44,15 +44,15 @@ export class AuthService {
     async login(loginDto: LoginDto) {
         const user = await this.userService.findByEmail(loginDto.email);
 
-        if (!user || user.length === 0) throw new HttpException("Invalid credentials", 401);
+        if (!user) throw new HttpException("Invalid credentials", 401);
 
-        const isPasswordValid = await bcrypt.compare(loginDto.password, user[0].password);
+        const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
 
         if (!isPasswordValid) throw new HttpException("Invalid credentials", 401);
 
-        const accessToken = await this.createToken(user[0]);
+        const accessToken = await this.createToken(user);
 
-        return { user: user[0], accessToken };
+        return { user, accessToken };
     }
 
     async getCurrentUser(user: any) {
