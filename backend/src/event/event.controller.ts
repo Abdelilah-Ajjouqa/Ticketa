@@ -14,12 +14,12 @@ export class EventController {
     @Post()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
-    create(@Body() createEventDto: CreateEventDto, @Request() req) {
+    create(@Body() createEventDto: CreateEventDto, @Request() req: any) {
         return this.eventService.create(createEventDto, req.user);
     }
 
     @Get()
-    findAll(@Request() req) {
+    findAll(@Request() req: any) {
         return this.eventService.findAll(false);
     }
 
@@ -47,6 +47,20 @@ export class EventController {
     @Roles(UserRole.ADMIN)
     update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
         return this.eventService.update(id, updateEventDto);
+    }
+
+    @Patch(':id/publish')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    publish(@Param('id') id: string) {
+        return this.eventService.publish(id);
+    }
+
+    @Patch(':id/cancel')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    cancel(@Param('id') id: string) {
+        return this.eventService.cancel(id);
     }
 
     @Delete(':id')
