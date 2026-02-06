@@ -16,6 +16,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/user-role.enum';
+import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('user')
 export class UserController {
@@ -35,7 +36,7 @@ export class UserController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Request() req) {
+  getProfile(@Request() req: AuthenticatedRequest) {
     return req.user;
   }
 

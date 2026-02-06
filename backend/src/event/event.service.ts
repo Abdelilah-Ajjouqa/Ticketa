@@ -5,12 +5,13 @@ import { Event } from './schema/event.schema';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { EventStatus } from 'src/common/enums/event-status.enum';
+import { AuthenticatedUser } from 'src/common/interfaces/auth.interface';
 
 @Injectable()
 export class EventService {
-  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) { }
+  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
 
-  async create(createEventDto: CreateEventDto, user: any) {
+  async create(createEventDto: CreateEventDto, user: AuthenticatedUser) {
     const newEvent = new this.eventModel({
       ...createEventDto,
       availableTickets: createEventDto.totalTickets,

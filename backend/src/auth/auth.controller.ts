@@ -10,6 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -27,8 +28,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  async getCurrentUser(@Request() req: any) {
-    console.log(req.user);
+  async getCurrentUser(@Request() req: AuthenticatedRequest) {
     return await this.authService.getCurrentUser(req.user);
   }
 }

@@ -1,32 +1,31 @@
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
-import { Event } from "src/event/schema/event.schema";
-import { User } from "src/user/schema/user.schema";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { Event } from 'src/event/schema/event.schema';
+import { User } from 'src/user/schema/user.schema';
 
 export enum ReservationStatus {
-    PENDING = 'pending',
-    CONFIRMED = 'confirmed',
-    CANCELLED = 'cancelled'
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  CANCELLED = 'cancelled',
 }
 
 @Schema({ timestamps: true })
 export class Reservation {
-    @Prop({ type: Types.ObjectId, ref: 'Event', required: true })
-    event: Event;
+  @Prop({ type: Types.ObjectId, ref: 'Event', required: true })
+  event: Event;
 
-    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-    user: User;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user: User;
 
-    @Prop({
-        required: true,
-        enum: ReservationStatus,
-        default: ReservationStatus.PENDING
-    })
-    status: ReservationStatus;
+  @Prop({
+    required: true,
+    enum: ReservationStatus,
+    default: ReservationStatus.PENDING,
+  })
+  status: ReservationStatus;
 
-    @Prop({ unique: true })
-    ticketCode: string;
+  @Prop({ unique: true })
+  ticketCode: string;
 }
 
 export const ReservationSchema = SchemaFactory.createForClass(Reservation);

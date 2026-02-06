@@ -16,6 +16,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/user-role.enum';
+import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('events')
 export class EventController {
@@ -24,12 +25,15 @@ export class EventController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  create(@Body() createEventDto: CreateEventDto, @Request() req: any) {
+  create(
+    @Body() createEventDto: CreateEventDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.eventService.create(createEventDto, req.user);
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll() {
     return this.eventService.findAll(false);
   }
 
