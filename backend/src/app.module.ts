@@ -3,7 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongodbConfig } from './config/mongodbConfig';
 import { UserModule } from './user/user.module';
+import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
@@ -15,11 +17,13 @@ import { AuthModule } from './auth/auth.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: mongodbConfig,
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
 
     UserModule,
     AuthModule,
+    EventModule,
+    ReservationModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

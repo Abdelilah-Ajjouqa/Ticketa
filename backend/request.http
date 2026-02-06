@@ -1,0 +1,117 @@
+### Register Admin
+# @name registerAdmin
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "email": "admin@gmail.com",
+    "password": "password123",
+    "confirmPassword": "password123",
+    "role": "admin"
+}
+
+
+### Login Admin
+# @name loginAdmin
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "password123"
+}
+
+### Register Participant
+# @name registerUser
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "user",
+    "email": "user@gmail.com",
+    "password": "password123",
+    "confirmPassword": "password123",
+    "role": "participant"
+}
+
+### Login Participant
+# @name loginUser
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "user@gmail.com",
+    "password": "password123"
+}
+
+### Get Profile (Protected)
+GET http://localhost:3000/user/profile
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Get Admin Data (Protected - Should Fail for User)
+GET http://localhost:3000/user/admin
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Get Admin Data (Protected - Should Success for Admin)
+GET http://localhost:3000/user/admin
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### Create Event (Admin)
+# @name createEvent
+POST http://localhost:3000/events
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+Content-Type: application/json
+
+{
+    "title": "NestJS Workshop",
+    "description": "Learn NestJS from scratch",
+    "date": "2024-12-25T10:00:00.000Z",
+    "location": "Online",
+    "totalTickets": 100,
+    "price": 20
+}
+
+
+### Get All Events (Public - Published Only)
+GET http://localhost:3000/events
+
+
+### Get All Events (Admin - All)
+GET http://localhost:3000/events/admin
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### Publish Event (Admin)
+PATCH http://localhost:3000/events/{{createEvent.response.body._id}}/publish
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### Cancel Event (Admin)
+PATCH http://localhost:3000/events/{{createEvent.response.body._id}}/cancel
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### Delete Event (Admin)
+DELETE http://localhost:3000/events/{{createEvent.response.body._id}}
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### Create Reservation (Participant)
+# @name createReservation
+POST http://localhost:3000/reservations
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+Content-Type: application/json
+
+{
+    "eventId": "{{createEvent.response.body._id}}"
+}
+
+### Cancel Reservation
+DELETE http://localhost:3000/reservations/{{createReservation.response.body._id}}
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Download Ticket PDF
+GET http://localhost:3000/reservations/{{createReservation.response.body._id}}/pdf
+Authorization: Bearer {{loginUser.response.body.accessToken}}
