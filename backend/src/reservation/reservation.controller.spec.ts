@@ -4,7 +4,14 @@ import { ReservationService } from './reservation.service';
 
 describe('ReservationController', () => {
   let controller: ReservationController;
-  let reservationService: jest.Mocked<Partial<ReservationService>>;
+  let reservationService: {
+    create: jest.Mock;
+    findAll: jest.Mock;
+    findOne: jest.Mock;
+    update: jest.Mock;
+    remove: jest.Mock;
+    generateTicketPdf: jest.Mock;
+  };
 
   const mockReservation = {
     _id: '607f1f77bcf86cd799439022',

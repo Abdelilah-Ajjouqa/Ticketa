@@ -4,7 +4,11 @@ import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let authService: jest.Mocked<Partial<AuthService>>;
+  let authService: {
+    register: jest.Mock;
+    login: jest.Mock;
+    getCurrentUser: jest.Mock;
+  };
 
   const mockUser = {
     _id: '507f1f77bcf86cd799439011',

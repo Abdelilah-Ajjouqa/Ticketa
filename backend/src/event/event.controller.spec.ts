@@ -4,7 +4,15 @@ import { EventService } from './event.service';
 
 describe('EventController', () => {
   let controller: EventController;
-  let eventService: jest.Mocked<Partial<EventService>>;
+  let eventService: {
+    create: jest.Mock;
+    findAll: jest.Mock;
+    findOne: jest.Mock;
+    update: jest.Mock;
+    publish: jest.Mock;
+    cancel: jest.Mock;
+    remove: jest.Mock;
+  };
 
   const mockEvent = {
     _id: '507f1f77bcf86cd799439011',
