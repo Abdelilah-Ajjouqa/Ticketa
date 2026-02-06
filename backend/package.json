@@ -31,7 +31,7 @@
     "bcrypt": "^6.0.0",
     "class-validator": "^0.14.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^9.1.5",
+    "mongoose": "^9.1.6",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
@@ -79,6 +79,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }

@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: mongodbConfig,
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
 
     UserModule,
@@ -24,4 +24,4 @@ import { AuthModule } from './auth/auth.module';
     EventModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
