@@ -1,23 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Res,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('reservations')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ReservationController {
-  constructor(private readonly reservationService: ReservationService) { }
+  constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto, @Request() req) {
-    return this.reservationService.create(createReservationDto, req.user.userId);
+  create(
+    @Body() createReservationDto: CreateReservationDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.reservationService.create(
+      createReservationDto,
+      req.user.userId,
+    );
   }
 
   @Get()
-  findAll(@Request() req) {
+  findAll(@Request() req: AuthenticatedRequest) {
     return this.reservationService.findAll(req.user.userId, req.user.role);
   }
 
@@ -27,12 +45,15 @@ export class ReservationController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateReservationDto: UpdateReservationDto,
+  ) {
     return this.reservationService.update(+id, updateReservationDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() req) {
+  remove(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.reservationService.remove(id, req.user.userId, req.user.role);
   }
   @Get(':id/pdf')

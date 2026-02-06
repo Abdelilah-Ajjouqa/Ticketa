@@ -3,6 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import {
+  AuthenticatedUser,
+  JwtPayload,
+} from 'src/common/interfaces/auth.interface';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -12,12 +16,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  private async createToken(user: any) {
-    const payload = {
+  private async createToken(user: {
+    _id?: unknown;
+    id?: unknown;
+    email: string;
+    username: string;
+    role: string;
+  }) {
+    const payload: JwtPayload = {
       sub: String(user._id || user.id),
       email: user.email,
       username: user.username,
-      role: user.role,
+      role: user.role as JwtPayload['role'],
     };
 
     return this.jwtService.signAsync(payload);
@@ -58,7 +68,7 @@ export class AuthService {
     return { user, accessToken };
   }
 
-  async getCurrentUser(user: any) {
+  async getCurrentUser(user: AuthenticatedUser) {
     if (!user) throw new HttpException('Unauthorized', 401);
 
     const userData = await this.userService.findOne(user.userId);

@@ -56,7 +56,10 @@ describe('ReservationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ReservationService,
-        { provide: getModelToken(Reservation.name), useValue: reservationModel },
+        {
+          provide: getModelToken(Reservation.name),
+          useValue: reservationModel,
+        },
         { provide: getModelToken(Event.name), useValue: eventModel },
         { provide: getConnectionToken(), useValue: connection },
       ],
@@ -134,7 +137,9 @@ describe('ReservationService', () => {
         save: jest.fn().mockRejectedValue(new Error('DB error')),
       }));
 
-      await expect(service.create(createDto, userId)).rejects.toThrow('DB error');
+      await expect(service.create(createDto, userId)).rejects.toThrow(
+        'DB error',
+      );
       expect(eventModel.updateOne).toHaveBeenCalledWith(
         { _id: createDto.eventId },
         { $inc: { availableTickets: 1 } },
@@ -273,7 +278,11 @@ describe('ReservationService', () => {
       reservationModel.findById.mockResolvedValue(reservation);
 
       await expect(
-        service.remove(mockReservation._id, '507f1f77bcf86cd799439012', 'admin'),
+        service.remove(
+          mockReservation._id,
+          '507f1f77bcf86cd799439012',
+          'admin',
+        ),
       ).rejects.toThrow(BadRequestException);
     });
   });

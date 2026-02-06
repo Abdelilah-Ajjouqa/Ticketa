@@ -73,7 +73,10 @@ describe('EventService', () => {
       const result = await service.create(createEventDto as any, user);
 
       expect(result).toHaveProperty('title', createEventDto.title);
-      expect(result).toHaveProperty('availableTickets', createEventDto.totalTickets);
+      expect(result).toHaveProperty(
+        'availableTickets',
+        createEventDto.totalTickets,
+      );
       expect(result).toHaveProperty('createdBy', user.userId);
     });
   });

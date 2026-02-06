@@ -119,7 +119,10 @@ describe('EventController', () => {
 
       const result = await controller.update(mockEvent._id, updateDto as any);
 
-      expect(eventService.update).toHaveBeenCalledWith(mockEvent._id, updateDto);
+      expect(eventService.update).toHaveBeenCalledWith(
+        mockEvent._id,
+        updateDto,
+      );
       expect(result).toEqual(updated);
     });
   });

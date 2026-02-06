@@ -13,7 +13,7 @@ describe('JwtStrategy', () => {
   });
 
   describe('validate', () => {
-    it('should return user payload from JWT token', async () => {
+    it('should return user payload from JWT token', () => {
       const payload = {
         sub: '507f1f77bcf86cd799439011',
         email: 'test@example.com',
@@ -21,7 +21,7 @@ describe('JwtStrategy', () => {
         role: 'participant',
       };
 
-      const result = await strategy.validate(payload);
+      const result = strategy.validate(payload);
 
       expect(result).toEqual({
         userId: payload.sub,
