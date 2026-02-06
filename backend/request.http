@@ -96,3 +96,22 @@ Authorization: Bearer {{loginAdmin.response.body.accessToken}}
 ### Delete Event (Admin)
 DELETE http://localhost:3000/events/{{createEvent.response.body._id}}
 Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### Create Reservation (Participant)
+# @name createReservation
+POST http://localhost:3000/reservations
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+Content-Type: application/json
+
+{
+    "eventId": "{{createEvent.response.body._id}}"
+}
+
+### Cancel Reservation
+DELETE http://localhost:3000/reservations/{{createReservation.response.body._id}}
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Download Ticket PDF
+GET http://localhost:3000/reservations/{{createReservation.response.body._id}}/pdf
+Authorization: Bearer {{loginUser.response.body.accessToken}}

@@ -5,6 +5,7 @@ import { mongodbConfig } from './config/mongodbConfig';
 import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     AuthModule,
     EventModule,
+    ReservationModule,
   ],
 })
 export class AppModule {}

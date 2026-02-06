@@ -4,18 +4,17 @@ import { Model } from 'mongoose';
 import { Event } from './schema/event.schema';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { User } from 'src/user/schema/user.schema';
 import { EventStatus } from 'src/common/enums/event-status.enum';
 
 @Injectable()
 export class EventService {
-  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
+  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) { }
 
-  async create(createEventDto: CreateEventDto, user: User) {
+  async create(createEventDto: CreateEventDto, user: any) {
     const newEvent = new this.eventModel({
       ...createEventDto,
       availableTickets: createEventDto.totalTickets,
-      createdBy: user,
+      createdBy: user.userId,
     });
     return newEvent.save();
   }
