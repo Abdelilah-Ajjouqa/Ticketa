@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useAppDispatch } from '@/lib/hooks';
 import { setCredentials } from '@/lib/features/auth/authSlice';
@@ -19,7 +21,6 @@ export default function LoginPage() {
             const res = await api.post('/auth/login', { email, password });
             const token = res.data.accessToken;
 
-            // Fetch user profile to get role and username
             const profileRes = await api.get('/auth/profile', {
                 headers: { Authorization: `Bearer ${token}` }
             });

@@ -1,7 +1,9 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { useAppSelector, useAppDispatch } from '@/lib/hooks';
+import { useAppSelector } from '@/lib/hooks';
 import { CalendarIcon, MapPinIcon, TicketIcon } from '@heroicons/react/24/outline';
 
 interface Event {
@@ -54,11 +56,9 @@ export default function EventDetailsPage() {
         try {
             const res = await api.post('/reservations', { eventId: event._id });
             setMessage({ type: 'success', text: 'Reservation successful! Check your profile.' });
-            // Update local state to reflect ticket decrement
             setEvent({ ...event, availableTickets: event.availableTickets - 1 });
-            // Redirect or show success
             setTimeout(() => {
-                // router.push('/profile'); // We haven't built profile page yet
+                // router.push('/profile');
             }, 2000);
         } catch (err: any) {
             setMessage({ type: 'error', text: err.response?.data?.message || 'Booking failed' });

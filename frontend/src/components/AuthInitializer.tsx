@@ -13,7 +13,6 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    // Temporarily set token in API if not already there (Api interceptor handles it but good to be sure)
                     const res = await api.get('/auth/profile', {
                         headers: { Authorization: `Bearer ${token}` }
                     });

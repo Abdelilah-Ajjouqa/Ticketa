@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline'; // v2 outline
+import { CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 
 interface Event {
     _id: string;
