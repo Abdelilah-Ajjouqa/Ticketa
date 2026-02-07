@@ -73,70 +73,75 @@ export default function EventDetailsPage() {
     const isSoldOut = event.availableTickets <= 0;
 
     return (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-xl leading-6 font-bold text-gray-900">
-                    {event.title}
-                </h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                    {event.description}
-                </p>
-            </div>
-            <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                <dl className="sm:divide-y sm:divide-gray-200">
-                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500 flex items-center">
-                            <CalendarIcon className="mr-2 h-5 w-5 text-gray-400" /> Date
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {new Date(event.date).toLocaleString()}
-                        </dd>
-                    </div>
-                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500 flex items-center">
-                            <MapPinIcon className="mr-2 h-5 w-5 text-gray-400" /> Location
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {event.location}
-                        </dd>
-                    </div>
-                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500 flex items-center">
-                            <TicketIcon className="mr-2 h-5 w-5 text-gray-400" /> Tickets
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {isSoldOut ? (
-                                <span className="text-red-600 font-bold">Sold Out</span>
-                            ) : (
-                                <span>{event.availableTickets} / {event.totalTickets} available</span>
-                            )}
-                        </dd>
-                    </div>
-                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">Price</dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-bold">
-                            ${event.price}
-                        </dd>
-                    </div>
-                </dl>
-            </div>
-            <div className="px-4 py-5 sm:px-6 border-t border-gray-200 bg-gray-50 sm:flex sm:flex-row-reverse">
-                <button
-                    onClick={handleBook}
-                    disabled={isSoldOut || bookingLoading}
-                    className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm ${isSoldOut
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                        } ${bookingLoading ? 'opacity-75 cursor-wait' : ''}`}
-                >
-                    {bookingLoading ? 'Booking...' : isSoldOut ? 'Sold Out' : 'Book Ticket'}
-                </button>
-            </div>
-            {message && (
-                <div className={`p-4 ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {message.text}
+        <div className="max-w-2xl mx-auto">
+            <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+                <div className="px-4 py-6 sm:px-6">
+                    <h1 className="text-3xl leading-8 font-bold text-slate-900">
+                        {event.title}
+                    </h1>
+                    <p className="mt-3 max-w-2xl text-base text-slate-600 leading-relaxed">
+                        {event.description}
+                    </p>
                 </div>
-            )}
+                <div className="border-t border-slate-200 px-4 py-6 sm:p-6">
+                    <dl className="space-y-6 sm:space-y-0 sm:divide-y sm:divide-slate-200">
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                            <dt className="text-sm font-medium text-slate-700 flex items-center">
+                                <CalendarIcon className="mr-2 h-5 w-5 text-indigo-500" /> Date & Time
+                            </dt>
+                            <dd className="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2 font-medium">
+                                {new Date(event.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </dd>
+                        </div>
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                            <dt className="text-sm font-medium text-slate-700 flex items-center">
+                                <MapPinIcon className="mr-2 h-5 w-5 text-indigo-500" /> Location
+                            </dt>
+                            <dd className="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2 font-medium">
+                                {event.location}
+                            </dd>
+                        </div>
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                            <dt className="text-sm font-medium text-slate-700 flex items-center">
+                                <TicketIcon className="mr-2 h-5 w-5 text-indigo-500" /> Tickets Available
+                            </dt>
+                            <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
+                                {isSoldOut ? (
+                                    <span className="text-red-600 font-bold text-base">Sold Out</span>
+                                ) : (
+                                    <span className="font-medium">
+                                        <span className="text-indigo-600 text-lg font-bold">{event.availableTickets}</span>
+                                        <span className="text-slate-500"> of {event.totalTickets} available</span>
+                                    </span>
+                                )}
+                            </dd>
+                        </div>
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                            <dt className="text-sm font-medium text-slate-700">Price</dt>
+                            <dd className="mt-1 text-3xl font-bold text-indigo-600 sm:mt-0 sm:col-span-2">
+                                ${event.price.toFixed(2)}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                <div className="px-4 py-6 sm:px-6 border-t border-slate-200 bg-slate-50 flex gap-3">
+                    <button
+                        onClick={handleBook}
+                        disabled={isSoldOut || bookingLoading}
+                        className={`flex-1 inline-flex justify-center rounded-md border border-transparent shadow-sm px-6 py-3 text-base font-medium text-white sm:text-sm transition-all ${isSoldOut
+                            ? 'bg-slate-400 cursor-not-allowed'
+                            : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                            } ${bookingLoading ? 'opacity-75 cursor-wait' : ''}`}
+                    >
+                        {bookingLoading ? 'Booking...' : isSoldOut ? 'Sold Out' : 'Book Ticket'}
+                    </button>
+                </div>
+                {message && (
+                    <div className={`px-4 py-4 ${message.type === 'success' ? 'bg-green-50 border-l-4 border-green-400 text-green-700' : 'bg-red-50 border-l-4 border-red-400 text-red-700'}`}>
+                        <p className="font-medium">{message.text}</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

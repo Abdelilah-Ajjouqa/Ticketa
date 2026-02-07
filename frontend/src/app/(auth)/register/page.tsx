@@ -13,6 +13,7 @@ export default function RegisterPage() {
         confirmPassword: ''
     });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -24,11 +25,19 @@ export default function RegisterPage() {
             return;
         }
 
+        if (formData.password.length < 6) {
+            setError("Password must be at least 6 characters");
+            return;
+        }
+
+        setLoading(true);
         try {
             await api.post('/auth/register', formData);
             router.push('/login?registered=true');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Registration failed');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,6 +57,7 @@ export default function RegisterPage() {
                                 placeholder="Username"
                                 value={formData.username}
                                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                disabled={loading}
                             />
                         </div>
                         <div>
@@ -58,6 +68,7 @@ export default function RegisterPage() {
                                 placeholder="Email address"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                disabled={loading}
                             />
                         </div>
                         <div>
@@ -68,6 +79,7 @@ export default function RegisterPage() {
                                 placeholder="Password"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                disabled={loading}
                             />
                         </div>
                         <div>
@@ -78,6 +90,7 @@ export default function RegisterPage() {
                                 placeholder="Confirm Password"
                                 value={formData.confirmPassword}
                                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                disabled={loading}
                             />
                         </div>
                     </div>
@@ -87,9 +100,10 @@ export default function RegisterPage() {
                     <div>
                         <button
                             type="submit"
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            disabled={loading}
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Register
+                            {loading ? 'Registering...' : 'Register'}
                         </button>
                     </div>
                 </form>

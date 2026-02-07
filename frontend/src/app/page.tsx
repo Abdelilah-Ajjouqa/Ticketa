@@ -32,16 +32,22 @@ export default function Home() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-5 sm:flex sm:items-center sm:justify-between">
-        <h3 className="text-2xl leading-6 font-medium text-gray-900">
-          Upcoming Events
-        </h3>
+    <div className="space-y-8">
+      <div className="border-b border-slate-200 pb-6 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl leading-8 font-bold text-slate-900">
+            Discover Events
+          </h1>
+          <p className="mt-2 text-base text-slate-600">
+            Find and book tickets for amazing events near you
+          </p>
+        </div>
       </div>
 
       {events.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No events found.</p>
+        <div className="text-center py-16 bg-white rounded-lg shadow-sm">
+          <p className="text-slate-500 text-lg">No events available at the moment.</p>
+          <p className="text-slate-400 mt-1">Check back soon for upcoming events!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
