@@ -86,7 +86,7 @@ export class ReservationService {
         .populate('user', '-password');
     }
     return this.reservationModel
-      .find({ user: new mongoose.Types.ObjectId(userId) })
+      .find({ user: userId } as any)
       .populate('event');
   }
 
@@ -111,7 +111,7 @@ export class ReservationService {
     // Only Admin or the owner can cancel
     if (
       role !== 'admin' &&
-      (reservation.user as mongoose.Types.ObjectId).toString() !== userId
+      String(reservation.user) !== userId
     ) {
       throw new BadRequestException('You cannot cancel this reservation');
     }

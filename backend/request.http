@@ -4,8 +4,8 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "username": "admin",
-    "email": "admin@gmail.com",
+    "username": "admin2",
+    "email": "admin2@gmail.com",
     "password": "password123",
     "confirmPassword": "password123",
     "role": "admin"
@@ -45,8 +45,44 @@ Content-Type: application/json
     "password": "password123"
 }
 
-### Get Profile (Protected)
+### Get Current User (Protected)
+GET http://localhost:3000/auth/me
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+###
+### ===== USER ROUTES (all protected now) =====
+###
+
+### Get Profile (Protected - returns user without password)
 GET http://localhost:3000/user/profile
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Get All Users (Admin Only - should fail for participant)
+GET http://localhost:3000/user
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Get All Users (Admin Only - should succeed)
+GET http://localhost:3000/user
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+### Get User by ID (Admin Only - should fail without token)
+GET http://localhost:3000/user/33
+
+### Get User by ID (Admin Only)
+GET http://localhost:3000/user/507f1f77bcf86cd799439011
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+### Update User (Admin Only - should fail for participant)
+PATCH http://localhost:3000/user/507f1f77bcf86cd799439011
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+Content-Type: application/json
+
+{
+    "username": "updateduser"
+}
+
+### Delete User (Admin Only - should fail for participant)
+DELETE http://localhost:3000/user/507f1f77bcf86cd799439011
 Authorization: Bearer {{loginUser.response.body.accessToken}}
 
 ### Get Admin Data (Protected - Should Fail for User)
@@ -57,6 +93,20 @@ Authorization: Bearer {{loginUser.response.body.accessToken}}
 GET http://localhost:3000/user/admin
 Authorization: Bearer {{loginAdmin.response.body.accessToken}}
 
+###
+### ===== EXCEPTION FILTER TESTS =====
+###
+
+### Invalid ObjectId (should return 400, not 500)
+GET http://localhost:3000/user/invalid-id-here
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+### Invalid ObjectId on events
+GET http://localhost:3000/events/not-a-valid-id
+
+###
+### ===== EVENT ROUTES =====
+###
 
 ### Create Event (Admin)
 # @name createEvent
@@ -67,7 +117,7 @@ Content-Type: application/json
 {
     "title": "NestJS Workshop",
     "description": "Learn NestJS from scratch",
-    "date": "2024-12-25T10:00:00.000Z",
+    "date": "2026-12-25T10:00:00.000Z",
     "location": "Online",
     "totalTickets": 100,
     "price": 20
@@ -97,6 +147,9 @@ Authorization: Bearer {{loginAdmin.response.body.accessToken}}
 DELETE http://localhost:3000/events/{{createEvent.response.body._id}}
 Authorization: Bearer {{loginAdmin.response.body.accessToken}}
 
+###
+### ===== RESERVATION ROUTES =====
+###
 
 ### Create Reservation (Participant)
 # @name createReservation
@@ -107,6 +160,14 @@ Content-Type: application/json
 {
     "eventId": "{{createEvent.response.body._id}}"
 }
+
+### Get All Reservations (Participant sees own)
+GET http://localhost:3000/reservations
+Authorization: Bearer {{loginUser.response.body.accessToken}}
+
+### Get All Reservations (Admin sees all)
+GET http://localhost:3000/reservations
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
 
 ### Cancel Reservation
 DELETE http://localhost:3000/reservations/{{createReservation.response.body._id}}

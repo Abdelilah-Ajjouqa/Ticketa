@@ -50,7 +50,11 @@ export class AuthService {
     const createdUser = await this.userService.create(newUser);
     const accessToken = await this.createToken(createdUser);
 
-    return { user: createdUser, accessToken };
+    // Exclude password from response
+    const userObj = createdUser.toObject ? createdUser.toObject() : createdUser;
+    const { password: _pw, ...userWithoutPassword } = userObj;
+
+    return { user: userWithoutPassword, accessToken };
   }
 
   async login(loginDto: LoginDto) {
@@ -65,7 +69,11 @@ export class AuthService {
 
     const accessToken = await this.createToken(user);
 
-    return { user, accessToken };
+    // Exclude password from response
+    const userObj = user.toObject ? user.toObject() : user;
+    const { password: _pw, ...userWithoutPassword } = userObj;
+
+    return { user: userWithoutPassword, accessToken };
   }
 
   async getCurrentUser(user: AuthenticatedUser) {

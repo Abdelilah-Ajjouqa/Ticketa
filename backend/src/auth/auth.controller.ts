@@ -10,7 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
+import type { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('auth')
 export class AuthController {

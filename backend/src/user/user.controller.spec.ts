@@ -15,7 +15,6 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     userService = {
-      create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
@@ -30,20 +29,8 @@ describe('UserController', () => {
     controller = module.get<UserController>(UserController);
   });
 
-  describe('create', () => {
-    it('should create a user', async () => {
-      const dto = { username: 'newuser', email: 'new@example.com' };
-      userService.create.mockResolvedValue(mockUser as any);
-
-      const result = await controller.create(dto as any);
-
-      expect(userService.create).toHaveBeenCalledWith(dto);
-      expect(result).toEqual(mockUser);
-    });
-  });
-
   describe('findAll', () => {
-    it('should return all users', async () => {
+    it('should return all users (admin only)', async () => {
       userService.findAll.mockResolvedValue([mockUser] as any);
 
       const result = await controller.findAll();
@@ -54,12 +41,14 @@ describe('UserController', () => {
   });
 
   describe('getProfile', () => {
-    it('should return the user from request', () => {
-      const req = { user: { userId: mockUser._id, role: 'participant' } };
+    it('should return the full user from service (without password)', async () => {
+      userService.findOne.mockResolvedValue(mockUser as any);
+      const req = { user: { userId: mockUser._id, email: 'test@example.com', username: 'testuser', role: 'participant' } };
 
-      const result = controller.getProfile(req);
+      const result = await controller.getProfile(req);
 
-      expect(result).toEqual(req.user);
+      expect(userService.findOne).toHaveBeenCalledWith(mockUser._id);
+      expect(result).toEqual(mockUser);
     });
   });
 
@@ -72,7 +61,7 @@ describe('UserController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a user by id', async () => {
+    it('should return a user by id (admin only)', async () => {
       userService.findOne.mockResolvedValue(mockUser as any);
 
       const result = await controller.findOne(mockUser._id);
@@ -83,7 +72,7 @@ describe('UserController', () => {
   });
 
   describe('update', () => {
-    it('should update a user', async () => {
+    it('should update a user (admin only)', async () => {
       const dto = { username: 'updated' };
       const updated = { ...mockUser, ...dto };
       userService.update.mockResolvedValue(updated as any);
@@ -96,7 +85,7 @@ describe('UserController', () => {
   });
 
   describe('remove', () => {
-    it('should remove a user', async () => {
+    it('should remove a user (admin only)', async () => {
       userService.remove.mockResolvedValue(mockUser as any);
 
       const result = await controller.remove(mockUser._id);

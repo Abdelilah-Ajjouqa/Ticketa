@@ -16,7 +16,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
+import type { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('reservations')
 @UseGuards(JwtAuthGuard, RolesGuard)
