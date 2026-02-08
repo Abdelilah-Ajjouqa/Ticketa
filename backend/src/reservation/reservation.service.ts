@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Reservation, ReservationStatus } from './schema/reservation.schema';
 import { Model } from 'mongoose';
@@ -39,6 +38,16 @@ export class ReservationService {
   ): Promise<Reservation> {
     const { eventId } = createReservationDto;
 
+    // Check for duplicate active reservation (not cancelled/refused)
+    const existingReservation = await this.reservationModel.findOne({
+      event: eventId,
+      user: userId,
+      status: { $in: [ReservationStatus.PENDING, ReservationStatus.CONFIRMED] },
+    } as any);
+    if (existingReservation) {
+      throw new BadRequestException('You already have an active reservation for this event');
+    }
+
     const updatedEvent = await this.eventModel.findOneAndUpdate(
       {
         _id: eventId,
@@ -58,13 +67,13 @@ export class ReservationService {
         throw new BadRequestException('No tickets available');
     }
 
-    // Create Reservation
+    // Create Reservation as PENDING
     try {
       const reservation = new this.reservationModel({
         event: eventId,
         user: userId,
         ticketCode: `${eventId}-${userId}-${Date.now()}`,
-        status: ReservationStatus.CONFIRMED,
+        status: ReservationStatus.PENDING,
       });
       return await reservation.save();
     } catch (error) {
@@ -76,32 +85,82 @@ export class ReservationService {
     }
   }
 
-  // Check logic to filter by UserRole (Admin sees all, User sees own)
-  // For now, let's implement retrieving ALL for Admin or filtered by User
-  async findAll(userId: string, role: string) {
+  async findAll(
+    userId: string,
+    role: string,
+    filters?: { eventId?: string; userId?: string; status?: string },
+  ) {
+    const query: Record<string, any> = {};
+
     if (role === 'admin') {
+      // Admin can filter by eventId, userId, status
+      if (filters?.eventId) query.event = filters.eventId;
+      if (filters?.userId) query.user = filters.userId;
+      if (filters?.status) query.status = filters.status;
+
       return this.reservationModel
-        .find()
+        .find(query)
         .populate('event')
         .populate('user', '-password');
     }
+
+    // Participants always see only their own, optionally filtered by event/status
+    query.user = userId;
+    if (filters?.eventId) query.event = filters.eventId;
+    if (filters?.status) query.status = filters.status;
+
     return this.reservationModel
-      .find({ user: userId } as any)
+      .find(query as any)
       .populate('event');
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, userId?: string, role?: string) {
     const reservation = await this.reservationModel
       .findById(id)
-      .populate('event');
+      .populate('event')
+      .populate('user', '-password');
     if (!reservation) throw new NotFoundException('Reservation not found');
+
+    // Ownership check: participants can only see their own reservations
+    if (role && role !== 'admin' && userId && String((reservation.user as any)._id || reservation.user) !== userId) {
+      throw new BadRequestException('You cannot access this reservation');
+    }
+
     return reservation;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(_id: number, _updateReservationDto: UpdateReservationDto) {
-    // Reservations usually aren't updated, only cancelled.
-    return `This action updates a #${String(_id)} reservation`;
+  async confirm(id: string) {
+    const reservation = await this.reservationModel.findById(id);
+    if (!reservation) throw new NotFoundException('Reservation not found');
+
+    if (reservation.status !== ReservationStatus.PENDING) {
+      throw new BadRequestException(
+        `Cannot confirm a reservation with status: ${reservation.status}`,
+      );
+    }
+
+    reservation.status = ReservationStatus.CONFIRMED;
+    return reservation.save();
+  }
+
+  async refuse(id: string) {
+    const reservation = await this.reservationModel.findById(id);
+    if (!reservation) throw new NotFoundException('Reservation not found');
+
+    if (reservation.status !== ReservationStatus.PENDING) {
+      throw new BadRequestException(
+        `Cannot refuse a reservation with status: ${reservation.status}`,
+      );
+    }
+
+    // Release the ticket back
+    await this.eventModel.updateOne(
+      { _id: reservation.event },
+      { $inc: { availableTickets: 1 } },
+    );
+
+    reservation.status = ReservationStatus.REFUSED;
+    return reservation.save();
   }
 
   async remove(id: string, userId: string, role: string) {
@@ -130,13 +189,25 @@ export class ReservationService {
     return reservation.save();
   }
 
-  async generateTicketPdf(reservationId: string): Promise<Buffer> {
+  async generateTicketPdf(reservationId: string, userId?: string, role?: string): Promise<Buffer> {
     const reservation = await this.reservationModel
       .findById(reservationId)
       .populate('event')
-      .populate('user');
+      .populate('user', '-password');
     if (!reservation) {
       throw new NotFoundException('Reservation not found');
+    }
+
+    // Ownership check
+    if (role && role !== 'admin' && userId && String((reservation.user as any)._id || reservation.user) !== userId) {
+      throw new BadRequestException('You cannot access this reservation');
+    }
+
+    // Only CONFIRMED reservations can generate PDF
+    if (reservation.status !== ReservationStatus.CONFIRMED) {
+      throw new BadRequestException(
+        'Ticket can only be downloaded for confirmed reservations',
+      );
     }
 
     const doc = new PDFDocument({ size: 'A4', margin: 50 });

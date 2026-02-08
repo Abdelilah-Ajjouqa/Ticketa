@@ -2,12 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventService } from './event.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Event } from './schema/event.schema';
+import { Reservation } from 'src/reservation/schema/reservation.schema';
 import { NotFoundException } from '@nestjs/common';
 import { EventStatus } from 'src/common/enums/event-status.enum';
 
 describe('EventService', () => {
   let service: EventService;
   let eventModel: any;
+  let reservationModel: any;
 
   const mockEvent = {
     _id: '507f1f77bcf86cd799439011',
@@ -29,6 +31,12 @@ describe('EventService', () => {
     findById: jest.fn(),
     findByIdAndUpdate: jest.fn(),
     findByIdAndDelete: jest.fn(),
+    aggregate: jest.fn(),
+    countDocuments: jest.fn(),
+  };
+
+  const mockReservationModel = {
+    aggregate: jest.fn(),
   };
 
   function createMockModel() {
@@ -47,11 +55,13 @@ describe('EventService', () => {
       providers: [
         EventService,
         { provide: getModelToken(Event.name), useValue: mockModel },
+        { provide: getModelToken(Reservation.name), useValue: mockReservationModel },
       ],
     }).compile();
 
     service = module.get<EventService>(EventService);
     eventModel = module.get(getModelToken(Event.name));
+    reservationModel = module.get(getModelToken(Reservation.name));
   });
 
   afterEach(() => {
@@ -249,6 +259,57 @@ describe('EventService', () => {
       await expect(service.remove('nonexistent')).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('getStats', () => {
+    it('should return aggregated event and reservation stats', async () => {
+      eventModel.aggregate
+        .mockResolvedValueOnce([
+          { _id: 'published', count: 5 },
+          { _id: 'draft', count: 3 },
+        ])
+        .mockResolvedValueOnce([
+          { _id: null, totalTickets: 500, availableTickets: 200 },
+        ]);
+
+      eventModel.countDocuments.mockResolvedValue(4);
+
+      reservationModel.aggregate.mockResolvedValue([
+        { _id: 'pending', count: 10 },
+        { _id: 'confirmed', count: 15 },
+        { _id: 'refused', count: 2 },
+        { _id: 'cancelled', count: 3 },
+      ]);
+
+      const result = await service.getStats();
+
+      expect(result.events.total).toBe(8);
+      expect(result.events.byStatus).toEqual({ published: 5, draft: 3 });
+      expect(result.events.upcoming).toBe(4);
+      expect(result.events.fillRate).toBe(60);
+      expect(result.reservations.total).toBe(30);
+      expect(result.reservations.byStatus).toEqual({
+        pending: 10,
+        confirmed: 15,
+        refused: 2,
+        cancelled: 3,
+      });
+    });
+
+    it('should return 0 fill rate when no published events', async () => {
+      eventModel.aggregate
+        .mockResolvedValueOnce([{ _id: 'draft', count: 2 }])
+        .mockResolvedValueOnce([]);
+
+      eventModel.countDocuments.mockResolvedValue(0);
+      reservationModel.aggregate.mockResolvedValue([]);
+
+      const result = await service.getStats();
+
+      expect(result.events.fillRate).toBe(0);
+      expect(result.events.total).toBe(2);
+      expect(result.reservations.total).toBe(0);
     });
   });
 });

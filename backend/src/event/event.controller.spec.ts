@@ -12,6 +12,7 @@ describe('EventController', () => {
     publish: jest.Mock;
     cancel: jest.Mock;
     remove: jest.Mock;
+    getStats: jest.Mock;
   };
 
   const mockEvent = {
@@ -36,6 +37,7 @@ describe('EventController', () => {
       publish: jest.fn(),
       cancel: jest.fn(),
       remove: jest.fn(),
+      getStats: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -161,6 +163,29 @@ describe('EventController', () => {
 
       expect(eventService.remove).toHaveBeenCalledWith(mockEvent._id);
       expect(result).toEqual({ message: 'Event deleted successfully' });
+    });
+  });
+
+  describe('getStats', () => {
+    it('should return event and reservation stats', async () => {
+      const mockStats = {
+        events: {
+          total: 8,
+          byStatus: { published: 5, draft: 3 },
+          upcoming: 4,
+          fillRate: 60,
+        },
+        reservations: {
+          total: 30,
+          byStatus: { pending: 10, confirmed: 15, refused: 2, cancelled: 3 },
+        },
+      };
+      eventService.getStats.mockResolvedValue(mockStats);
+
+      const result = await controller.getStats();
+
+      expect(eventService.getStats).toHaveBeenCalled();
+      expect(result).toEqual(mockStats);
     });
   });
 });

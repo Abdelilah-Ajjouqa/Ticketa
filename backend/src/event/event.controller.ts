@@ -44,6 +44,13 @@ export class EventController {
     return this.eventService.findAll(true);
   }
 
+  @Get('stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  getStats() {
+    return this.eventService.getStats();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventService.findOne(id, false);

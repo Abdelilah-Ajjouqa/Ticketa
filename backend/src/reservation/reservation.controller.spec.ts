@@ -8,7 +8,8 @@ describe('ReservationController', () => {
     create: jest.Mock;
     findAll: jest.Mock;
     findOne: jest.Mock;
-    update: jest.Mock;
+    confirm: jest.Mock;
+    refuse: jest.Mock;
     remove: jest.Mock;
     generateTicketPdf: jest.Mock;
   };
@@ -18,15 +19,19 @@ describe('ReservationController', () => {
     event: '507f1f77bcf86cd799439011',
     user: '507f1f77bcf86cd799439012',
     ticketCode: 'ticket-123',
-    status: 'confirmed',
+    status: 'pending',
   };
+
+  const mockReq = { user: { userId: 'user1', role: 'participant', email: 'test@test.com', username: 'test' } };
+  const mockAdminReq = { user: { userId: 'admin1', role: 'admin', email: 'admin@test.com', username: 'admin' } };
 
   beforeEach(async () => {
     reservationService = {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
-      update: jest.fn(),
+      confirm: jest.fn(),
+      refuse: jest.fn(),
       remove: jest.fn(),
       generateTicketPdf: jest.fn(),
     };
@@ -44,10 +49,9 @@ describe('ReservationController', () => {
   describe('create', () => {
     it('should create a reservation', async () => {
       const dto = { eventId: '507f1f77bcf86cd799439011' };
-      const req = { user: { userId: 'user1', role: 'participant' } };
       reservationService.create.mockResolvedValue(mockReservation as any);
 
-      const result = await controller.create(dto, req);
+      const result = await controller.create(dto, mockReq);
 
       expect(reservationService.create).toHaveBeenCalledWith(dto, 'user1');
       expect(result).toEqual(mockReservation);
@@ -56,78 +60,89 @@ describe('ReservationController', () => {
 
   describe('findAll', () => {
     it('should return all reservations for the user', async () => {
-      const req = { user: { userId: 'user1', role: 'participant' } };
       reservationService.findAll.mockResolvedValue([mockReservation] as any);
 
-      const result = await controller.findAll(req);
+      const result = await controller.findAll(mockReq);
 
-      expect(reservationService.findAll).toHaveBeenCalledWith(
-        'user1',
-        'participant',
-      );
+      expect(reservationService.findAll).toHaveBeenCalledWith('user1', 'participant', {
+        eventId: undefined,
+        userId: undefined,
+        status: undefined,
+      });
+      expect(result).toEqual([mockReservation]);
+    });
+
+    it('should pass query filters to service', async () => {
+      reservationService.findAll.mockResolvedValue([mockReservation] as any);
+
+      const result = await controller.findAll(mockAdminReq, 'event123', 'user456', 'pending');
+
+      expect(reservationService.findAll).toHaveBeenCalledWith('admin1', 'admin', {
+        eventId: 'event123',
+        userId: 'user456',
+        status: 'pending',
+      });
       expect(result).toEqual([mockReservation]);
     });
   });
 
   describe('findOne', () => {
-    it('should return a reservation by id', async () => {
+    it('should return a reservation by id with ownership check', async () => {
       reservationService.findOne.mockResolvedValue(mockReservation as any);
 
-      const result = await controller.findOne(mockReservation._id);
+      const result = await controller.findOne(mockReservation._id, mockReq);
 
-      expect(reservationService.findOne).toHaveBeenCalledWith(
-        mockReservation._id,
-      );
+      expect(reservationService.findOne).toHaveBeenCalledWith(mockReservation._id, 'user1', 'participant');
       expect(result).toEqual(mockReservation);
     });
   });
 
-  describe('update', () => {
-    it('should call update with correct params', () => {
-      const dto = {};
-      reservationService.update.mockReturnValue(
-        'This action updates a #1 reservation' as any,
-      );
+  describe('confirm', () => {
+    it('should confirm a reservation (admin only)', async () => {
+      const confirmed = { ...mockReservation, status: 'confirmed' };
+      reservationService.confirm.mockResolvedValue(confirmed as any);
 
-      const result = controller.update('1', dto as any);
+      const result = await controller.confirm(mockReservation._id);
 
-      expect(reservationService.update).toHaveBeenCalledWith(1, dto);
-      expect(result).toBe('This action updates a #1 reservation');
+      expect(reservationService.confirm).toHaveBeenCalledWith(mockReservation._id);
+      expect(result).toEqual(confirmed);
+    });
+  });
+
+  describe('refuse', () => {
+    it('should refuse a reservation (admin only)', async () => {
+      const refused = { ...mockReservation, status: 'refused' };
+      reservationService.refuse.mockResolvedValue(refused as any);
+
+      const result = await controller.refuse(mockReservation._id);
+
+      expect(reservationService.refuse).toHaveBeenCalledWith(mockReservation._id);
+      expect(result).toEqual(refused);
     });
   });
 
   describe('remove', () => {
     it('should remove a reservation', async () => {
-      const req = { user: { userId: 'user1', role: 'participant' } };
       const cancelled = { ...mockReservation, status: 'cancelled' };
       reservationService.remove.mockResolvedValue(cancelled as any);
 
-      const result = await controller.remove(mockReservation._id, req);
+      const result = await controller.remove(mockReservation._id, mockReq);
 
-      expect(reservationService.remove).toHaveBeenCalledWith(
-        mockReservation._id,
-        'user1',
-        'participant',
-      );
+      expect(reservationService.remove).toHaveBeenCalledWith(mockReservation._id, 'user1', 'participant');
       expect(result).toEqual(cancelled);
     });
   });
 
   describe('downloadTicket', () => {
-    it('should send the PDF buffer as a response', async () => {
+    it('should send the PDF buffer as a response with ownership', async () => {
       const pdfBuffer = Buffer.from('fake-pdf-content');
       reservationService.generateTicketPdf.mockResolvedValue(pdfBuffer);
 
-      const res = {
-        set: jest.fn(),
-        end: jest.fn(),
-      } as any;
+      const res = { set: jest.fn(), end: jest.fn() } as any;
 
-      await controller.downloadTicket(mockReservation._id, res);
+      await controller.downloadTicket(mockReservation._id, mockReq, res);
 
-      expect(reservationService.generateTicketPdf).toHaveBeenCalledWith(
-        mockReservation._id,
-      );
+      expect(reservationService.generateTicketPdf).toHaveBeenCalledWith(mockReservation._id, 'user1', 'participant');
       expect(res.set).toHaveBeenCalledWith({
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename=ticket-${mockReservation._id}.pdf`,
