@@ -6,6 +6,7 @@ import { User } from 'src/user/schema/user.schema';
 export enum ReservationStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
+  REFUSED = 'refused',
   CANCELLED = 'cancelled',
 }
 

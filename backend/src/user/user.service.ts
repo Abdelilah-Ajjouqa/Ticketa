@@ -14,11 +14,11 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.usermodel.find();
+    return await this.usermodel.find().select('-password');
   }
 
   async findOne(id: string) {
-    return await this.usermodel.findById(id);
+    return await this.usermodel.findById(id).select('-password');
   }
 
   async findByEmail(email: string) {
@@ -26,10 +26,10 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return await this.usermodel.findByIdAndUpdate(id, updateUserDto);
+    return await this.usermodel.findByIdAndUpdate(id, updateUserDto, { new: true }).select('-password');
   }
 
   async remove(id: string) {
-    return await this.usermodel.findByIdAndDelete(id);
+    return await this.usermodel.findByIdAndDelete(id).select('-password');
   }
 }

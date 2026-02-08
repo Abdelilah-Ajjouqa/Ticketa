@@ -16,7 +16,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
+import type { AuthenticatedRequest } from 'src/common/interfaces/auth.interface';
 
 @Controller('events')
 export class EventController {
@@ -42,6 +42,13 @@ export class EventController {
   @Roles(UserRole.ADMIN)
   findAllAdmin() {
     return this.eventService.findAll(true);
+  }
+
+  @Get('stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  getStats() {
+    return this.eventService.getStats();
   }
 
   @Get(':id')

@@ -58,14 +58,23 @@ describe('AuthService', () => {
       confirmPassword: 'password123',
     };
 
-    it('should register a new user and return user with access token', async () => {
+    it('should register a new user and return user with access token (no password)', async () => {
       userService.findByEmail.mockResolvedValue(null);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
-      userService.create.mockResolvedValue({
+      const createdUser = {
         ...mockUser,
         email: registerDto.email,
         username: registerDto.username,
-      } as any);
+        toObject: function () { return { ...this }; },
+      };
+      delete (createdUser as any).toObject;
+      const createdUserWithToObject = {
+        ...mockUser,
+        email: registerDto.email,
+        username: registerDto.username,
+        toObject() { return { _id: this._id, email: this.email, username: this.username, password: this.password, role: this.role }; },
+      };
+      userService.create.mockResolvedValue(createdUserWithToObject as any);
 
       const result = await service.register(registerDto);
 
@@ -78,6 +87,7 @@ describe('AuthService', () => {
       });
       expect(result).toHaveProperty('user');
       expect(result).toHaveProperty('accessToken', 'mock-jwt-token');
+      expect(result.user).not.toHaveProperty('password');
     });
 
     it('should throw 409 if email already exists', async () => {
@@ -102,8 +112,12 @@ describe('AuthService', () => {
   describe('login', () => {
     const loginDto = { email: 'test@example.com', password: 'password123' };
 
-    it('should login and return user with access token', async () => {
-      userService.findByEmail.mockResolvedValue(mockUser as any);
+    it('should login and return user with access token (no password)', async () => {
+      const mockUserWithToObject = {
+        ...mockUser,
+        toObject() { return { _id: mockUser._id, email: mockUser.email, username: mockUser.username, password: mockUser.password, role: mockUser.role }; },
+      };
+      userService.findByEmail.mockResolvedValue(mockUserWithToObject as any);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       const result = await service.login(loginDto);
@@ -115,6 +129,7 @@ describe('AuthService', () => {
       );
       expect(result).toHaveProperty('user');
       expect(result).toHaveProperty('accessToken', 'mock-jwt-token');
+      expect(result.user).not.toHaveProperty('password');
     });
 
     it('should throw 401 if user not found', async () => {
