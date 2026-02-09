@@ -151,13 +151,30 @@ describe('AuthService', () => {
   });
 
   describe('getCurrentUser', () => {
-    it('should return the current user data', async () => {
-      userService.findOne.mockResolvedValue(mockUser as any);
+    it('should return the current user data with access token (no password)', async () => {
+      const mockUserWithToObject = {
+        ...mockUser,
+        toObject() { return { _id: mockUser._id, email: mockUser.email, username: mockUser.username, password: mockUser.password, role: mockUser.role }; },
+      };
+      userService.findOne.mockResolvedValue(mockUserWithToObject as any);
 
-      const result = await service.getCurrentUser({ userId: mockUser._id });
+      const result = await service.getCurrentUser({
+        userId: mockUser._id,
+        email: mockUser.email,
+        username: mockUser.username,
+        role: mockUser.role as any,
+      });
 
       expect(userService.findOne).toHaveBeenCalledWith(mockUser._id);
-      expect(result).toEqual(mockUser);
+      expect(result).toHaveProperty('accessToken', 'mock-jwt-token');
+      expect(result).toHaveProperty('user');
+      expect(result.user).not.toHaveProperty('password');
+      expect(result.user).toEqual({
+        _id: mockUser._id,
+        email: mockUser.email,
+        username: mockUser.username,
+        role: mockUser.role,
+      });
     });
 
     it('should throw 401 if user payload is null', async () => {
@@ -170,7 +187,12 @@ describe('AuthService', () => {
       userService.findOne.mockResolvedValue(null);
 
       await expect(
-        service.getCurrentUser({ userId: 'nonexistent' }),
+        service.getCurrentUser({
+          userId: 'nonexistent',
+          email: 'test@example.com',
+          username: 'testuser',
+          role: 'participant' as any,
+        }),
       ).rejects.toThrow(new HttpException('User not found', 404));
     });
   });

@@ -75,7 +75,7 @@ export class AuthService {
     return { user: userWithoutPassword, accessToken };
   }
 
-  async getCurrentUser(user: AuthenticatedUser) {
+  async getCurrentUser(user: AuthenticatedUser | null) {
     if (!user) throw new HttpException('Unauthorized', 401);
 
     const userData = await this.userService.findOne(user.userId);
