@@ -7,21 +7,21 @@ interface StatsCardProps {
 }
 
 const colors: Record<string, string> = {
-  indigo: 'bg-indigo-50 text-indigo-600',
-  emerald: 'bg-emerald-50 text-emerald-600',
-  amber: 'bg-amber-50 text-amber-600',
-  rose: 'bg-rose-50 text-rose-600',
-  violet: 'bg-violet-50 text-violet-600',
+  indigo: 'bg-accent/15 text-accent',
+  emerald: 'bg-emerald-500/15 text-emerald-400',
+  amber: 'bg-amber-500/15 text-amber-400',
+  rose: 'bg-rose-500/15 text-rose-400',
+  violet: 'bg-violet-500/15 text-violet-400',
 };
 
 export default function StatsCard({ title, value, icon, trend, color = 'indigo' }: StatsCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
+    <div className="bg-dark-secondary rounded-xl border border-border-strong p-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-500">{title}</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{value}</p>
-          {trend && <p className="mt-1 text-xs text-slate-400">{trend}</p>}
+          <p className="text-sm font-medium text-light-muted">{title}</p>
+          <p className="mt-1 text-2xl font-bold text-light">{value}</p>
+          {trend && <p className="mt-1 text-xs text-light-muted/60">{trend}</p>}
         </div>
         <div className={`p-3 rounded-lg ${colors[color] || colors.indigo}`}>
           {icon}

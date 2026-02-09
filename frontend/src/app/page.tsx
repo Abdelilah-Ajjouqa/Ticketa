@@ -36,26 +36,37 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div className="relative overflow-hidden bg-dark-primary">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
-              Discover Amazing Events
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-muted text-accent text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+              Live Events
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-light">
+              Discover Amazing{' '}
+              <span className="text-accent">Events</span>
             </h1>
-            <p className="mt-4 text-lg text-indigo-100">
+            <p className="mt-4 text-lg text-light-muted">
               Find and book the best events happening near you. From concerts to
               workshops, we&apos;ve got you covered.
             </p>
           </div>
           <div className="mt-8 max-w-xl">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-light-muted" />
               <input
                 type="text"
                 placeholder="Search events by name or location..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-xl bg-white text-slate-900 placeholder-slate-400 shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-sm"
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-dark-secondary text-light placeholder-light-muted/60 border border-border-strong focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 text-sm transition-all"
               />
             </div>
           </div>
@@ -66,10 +77,10 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">
+            <h2 className="text-xl font-bold text-light">
               {search ? `Results for "${search}"` : 'Upcoming Events'}
             </h2>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-light-muted mt-1">
               {filtered.length} event{filtered.length !== 1 ? 's' : ''} available
             </p>
           </div>
@@ -83,7 +94,7 @@ export default function Home() {
             description={
               search ? 'Try a different search term' : 'Check back later for new events'
             }
-            icon={<CalendarDaysIcon className="h-12 w-12 text-slate-300" />}
+            icon={<CalendarDaysIcon className="h-12 w-12 text-light-muted/40" />}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

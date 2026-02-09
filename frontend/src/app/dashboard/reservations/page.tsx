@@ -105,21 +105,21 @@ export default function ReservationsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-light">
             {isAdmin ? 'Reservations' : 'My Reservations'}
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-light-muted mt-1">
             {isAdmin
               ? 'Manage all reservations'
               : 'View and manage your bookings'}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <FunnelIcon className="h-4 w-4 text-slate-400" />
+          <FunnelIcon className="h-4 w-4 text-light-muted" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+            className="px-3 py-2 bg-dark-secondary border border-border-strong rounded-lg text-sm text-light focus:outline-none focus:ring-2 focus:ring-accent/50"
           >
             <option value="">All statuses</option>
             <option value="pending">Pending</option>
@@ -140,67 +140,67 @@ export default function ReservationsPage() {
               ? 'No reservations yet'
               : 'Book your first event!'
           }
-          icon={<TicketIcon className="h-12 w-12 text-slate-300" />}
+          icon={<TicketIcon className="h-12 w-12 text-light-muted/30" />}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-dark-secondary rounded-xl border border-border-strong overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                <tr className="border-b border-border bg-dark-primary/50">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Event
                   </th>
                   {isAdmin && (
-                    <th className="text-left px-6 py-3 font-medium text-slate-500">
+                    <th className="text-left px-6 py-3 font-medium text-light-muted">
                       User
                     </th>
                   )}
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Status
                   </th>
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Ticket Code
                   </th>
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Date
                   </th>
-                  <th className="text-right px-6 py-3 font-medium text-slate-500">
+                  <th className="text-right px-6 py-3 font-medium text-light-muted">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {reservations.map((r) => {
                   const event = r.event as ApiEvent;
                   const rUser = r.user as ApiUser;
                   return (
                     <tr
                       key={r._id}
-                      className="hover:bg-slate-50 transition-colors"
+                      className="hover:bg-dark-primary/30 transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <p className="font-medium text-slate-900">
+                        <p className="font-medium text-light">
                           {event?.title || 'Unknown Event'}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-light-muted">
                           {event?.date
                             ? new Date(event.date).toLocaleDateString()
                             : ''}
                         </p>
                       </td>
                       {isAdmin && (
-                        <td className="px-6 py-4 text-slate-600">
+                        <td className="px-6 py-4 text-light-muted">
                           {rUser?.username || rUser?.email || 'Unknown'}
                         </td>
                       )}
                       <td className="px-6 py-4">
                         <Badge value={r.status} />
                       </td>
-                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">
+                      <td className="px-6 py-4 text-light-muted font-mono text-xs">
                         {r.ticketCode || '\u2014'}
                       </td>
-                      <td className="px-6 py-4 text-slate-500">
+                      <td className="px-6 py-4 text-light-muted">
                         {new Date(r.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4">
@@ -210,7 +210,7 @@ export default function ReservationsPage() {
                               <button
                                 onClick={() => handleConfirm(r._id)}
                                 disabled={actionLoading === r._id}
-                                className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+                                className="p-2 text-light-muted bg-dark-primary/50 border border-border-strong rounded-lg hover:text-emerald-400 hover:border-emerald-500/30 transition-colors disabled:opacity-50"
                                 title="Confirm"
                               >
                                 <CheckCircleIcon className="h-4 w-4" />
@@ -218,7 +218,7 @@ export default function ReservationsPage() {
                               <button
                                 onClick={() => handleRefuse(r._id)}
                                 disabled={actionLoading === r._id}
-                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50"
+                                className="p-2 text-light-muted bg-dark-primary/50 border border-border-strong rounded-lg hover:text-rose-400 hover:border-rose-500/30 transition-colors disabled:opacity-50"
                                 title="Refuse"
                               >
                                 <XCircleIcon className="h-4 w-4" />
@@ -228,7 +228,7 @@ export default function ReservationsPage() {
                           {r.status === 'confirmed' && (
                             <button
                               onClick={() => handleDownloadPdf(r._id)}
-                              className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                              className="p-2 text-light-muted bg-dark-primary/50 border border-border-strong rounded-lg hover:text-accent hover:border-accent/30 transition-colors"
                               title="Download Ticket"
                             >
                               <ArrowDownTrayIcon className="h-4 w-4" />
@@ -237,7 +237,7 @@ export default function ReservationsPage() {
                           {(r.status === 'pending' || r.status === 'confirmed') && (
                             <button
                               onClick={() => setCancelModal(r)}
-                              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                              className="p-2 text-light-muted bg-dark-primary/50 border border-border-strong rounded-lg hover:text-rose-400 hover:border-rose-500/30 transition-colors"
                               title="Cancel"
                             >
                               <TrashIcon className="h-4 w-4" />
@@ -262,14 +262,14 @@ export default function ReservationsPage() {
           <>
             <button
               onClick={() => setCancelModal(null)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm font-medium text-light bg-dark-primary border border-border-strong hover:border-light/20 rounded-lg transition-colors"
             >
               Keep Reservation
             </button>
             <button
               onClick={handleCancel}
               disabled={actionLoading !== null}
-              className="px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-500 rounded-lg transition-colors disabled:opacity-50"
             >
               Cancel Reservation
             </button>

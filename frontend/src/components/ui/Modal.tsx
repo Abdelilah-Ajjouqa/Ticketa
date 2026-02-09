@@ -29,20 +29,20 @@ export default function Modal({ open, onClose, title, children, actions }: Modal
       <div className="flex min-h-full items-center justify-center p-4">
         <div
           ref={overlayRef}
-          className="fixed inset-0 bg-black/30 transition-opacity"
+          className="fixed inset-0 bg-black/60 transition-opacity"
           onClick={onClose}
         />
-        <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all">
+        <div className="relative bg-dark-secondary rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all border border-border-strong">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+            <h3 className="text-lg font-semibold text-light">{title}</h3>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 transition-colors"
+              className="text-light-muted hover:text-light transition-colors"
             >
               <XMarkIcon className="h-5 w-5" />
             </button>
           </div>
-          <div className="text-sm text-slate-600">{children}</div>
+          <div className="text-sm text-light-muted">{children}</div>
           {actions && <div className="mt-6 flex justify-end gap-3">{actions}</div>}
         </div>
       </div>

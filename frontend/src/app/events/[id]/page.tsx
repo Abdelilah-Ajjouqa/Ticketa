@@ -70,10 +70,10 @@ export default function EventDetailsPage() {
   if (!event) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
-        <p className="text-slate-500">Event not found.</p>
+        <p className="text-light-muted">Event not found.</p>
         <Link
           href="/"
-          className="mt-4 inline-block text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+          className="mt-4 inline-block text-accent hover:text-accent-hover text-sm font-medium"
         >
           &larr; Back to events
         </Link>
@@ -90,27 +90,30 @@ export default function EventDetailsPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-light-muted hover:text-light mb-6 transition-colors"
       >
         <ArrowLeftIcon className="h-4 w-4" />
         Back to events
       </Link>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-dark-secondary rounded-xl border border-border-strong shadow-sm overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-700 px-6 py-8 text-white">
-          <h1 className="text-2xl sm:text-3xl font-bold">{event.title}</h1>
-          <p className="mt-2 text-indigo-100 text-sm sm:text-base">{event.description}</p>
+        <div className="bg-gradient-to-r from-dark-primary via-dark-secondary to-dark-primary px-6 py-8 border-b border-border relative overflow-hidden">
+          <div className="absolute inset-0 bg-accent/5" />
+          <div className="relative">
+            <h1 className="text-2xl sm:text-3xl font-bold text-light">{event.title}</h1>
+            <p className="mt-2 text-light-muted text-sm sm:text-base">{event.description}</p>
+          </div>
         </div>
 
         {/* Details */}
         <div className="p-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-              <CalendarIcon className="h-5 w-5 text-indigo-500 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-dark-primary/60 rounded-lg border border-border">
+              <CalendarIcon className="h-5 w-5 text-accent mt-0.5" />
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase">Date & Time</p>
-                <p className="text-sm font-medium text-slate-900 mt-0.5">
+                <p className="text-xs font-medium text-light-muted uppercase">Date & Time</p>
+                <p className="text-sm font-medium text-light mt-0.5">
                   {new Date(event.date).toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
@@ -118,7 +121,7 @@ export default function EventDetailsPage() {
                     year: 'numeric',
                   })}
                 </p>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-light-muted">
                   {new Date(event.date).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -127,41 +130,41 @@ export default function EventDetailsPage() {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-              <MapPinIcon className="h-5 w-5 text-indigo-500 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-dark-primary/60 rounded-lg border border-border">
+              <MapPinIcon className="h-5 w-5 text-accent mt-0.5" />
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase">Location</p>
-                <p className="text-sm font-medium text-slate-900 mt-0.5">{event.location}</p>
+                <p className="text-xs font-medium text-light-muted uppercase">Location</p>
+                <p className="text-sm font-medium text-light mt-0.5">{event.location}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-              <CurrencyDollarIcon className="h-5 w-5 text-indigo-500 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-dark-primary/60 rounded-lg border border-border">
+              <CurrencyDollarIcon className="h-5 w-5 text-accent mt-0.5" />
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase">Price</p>
-                <p className="text-lg font-bold text-slate-900 mt-0.5">${event.price}</p>
+                <p className="text-xs font-medium text-light-muted uppercase">Price</p>
+                <p className="text-lg font-bold text-light mt-0.5">${event.price}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-              <TicketIcon className="h-5 w-5 text-indigo-500 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-dark-primary/60 rounded-lg border border-border">
+              <TicketIcon className="h-5 w-5 text-accent mt-0.5" />
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase">Availability</p>
+                <p className="text-xs font-medium text-light-muted uppercase">Availability</p>
                 {isSoldOut ? (
-                  <p className="text-sm font-bold text-rose-600 mt-0.5">Sold Out</p>
+                  <p className="text-sm font-bold text-rose-400 mt-0.5">Sold Out</p>
                 ) : (
                   <>
-                    <p className="text-sm font-medium text-slate-900 mt-0.5">
+                    <p className="text-sm font-medium text-light mt-0.5">
                       {event.availableTickets} of {event.totalTickets} tickets left
                     </p>
-                    <div className="mt-2 w-full bg-slate-200 rounded-full h-2">
+                    <div className="mt-2 w-full bg-dark-secondary rounded-full h-2">
                       <div
                         className={`h-2 rounded-full ${
                           ticketPercent > 80
                             ? 'bg-rose-500'
                             : ticketPercent > 50
                             ? 'bg-amber-500'
-                            : 'bg-emerald-500'
+                            : 'bg-accent'
                         }`}
                         style={{ width: `${ticketPercent}%` }}
                       />
@@ -177,8 +180,8 @@ export default function EventDetailsPage() {
             <div
               className={`p-4 rounded-lg text-sm ${
                 message.type === 'success'
-                  ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
-                  : 'bg-rose-50 border border-rose-200 text-rose-700'
+                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                  : 'bg-rose-500/10 border border-rose-500/20 text-rose-400'
               }`}
             >
               {message.text}
@@ -186,17 +189,17 @@ export default function EventDetailsPage() {
           )}
 
           {/* Action */}
-          <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="text-sm text-slate-500">
+          <div className="pt-4 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-sm text-light-muted">
               {!user && 'Sign in to book this event'}
             </div>
             <button
               onClick={handleBook}
               disabled={isSoldOut || bookingLoading}
-              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
+              className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all ${
                 isSoldOut
-                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-[0.98]'
+                  ? 'bg-dark-primary text-light-muted/50 cursor-not-allowed border border-border'
+                  : 'bg-accent text-dark-primary hover:bg-accent-hover active:scale-[0.98]'
               } ${bookingLoading ? 'opacity-50 cursor-wait' : ''}`}
             >
               {bookingLoading

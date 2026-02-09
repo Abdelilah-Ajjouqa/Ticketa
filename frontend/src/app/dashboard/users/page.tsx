@@ -58,68 +58,68 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Users</h1>
-        <p className="text-slate-500 mt-1">Manage platform users</p>
+        <h1 className="text-2xl font-bold text-light">Users</h1>
+        <p className="text-light-muted mt-1">Manage platform users</p>
       </div>
 
       {users.length === 0 ? (
         <EmptyState
           title="No users found"
-          icon={<UsersIcon className="h-12 w-12 text-slate-300" />}
+          icon={<UsersIcon className="h-12 w-12 text-light-muted/30" />}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-dark-secondary rounded-xl border border-border-strong overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                <tr className="border-b border-border bg-dark-primary/50">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     User
                   </th>
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Email
                   </th>
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Role
                   </th>
-                  <th className="text-left px-6 py-3 font-medium text-slate-500">
+                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Joined
                   </th>
-                  <th className="text-right px-6 py-3 font-medium text-slate-500">
+                  <th className="text-right px-6 py-3 font-medium text-light-muted">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {users.map((u) => (
                   <tr
                     key={u._id}
-                    className="hover:bg-slate-50 transition-colors"
+                    className="hover:bg-dark-primary/30 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                          <span className="text-indigo-700 text-xs font-bold">
+                        <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+                          <span className="text-accent text-xs font-bold">
                             {u.username?.charAt(0).toUpperCase() || '?'}
                           </span>
                         </div>
-                        <span className="font-medium text-slate-900">
+                        <span className="font-medium text-light">
                           {u.username}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-600">{u.email}</td>
+                    <td className="px-6 py-4 text-light-muted">{u.email}</td>
                     <td className="px-6 py-4">
                       <Badge value={u.role} />
                     </td>
-                    <td className="px-6 py-4 text-slate-500">
+                    <td className="px-6 py-4 text-light-muted">
                       {new Date(u.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-end">
                         <button
                           onClick={() => setDeleteModal(u)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                          className="p-2 text-light-muted bg-dark-primary/50 border border-border-strong rounded-lg hover:text-rose-400 hover:border-rose-500/30 transition-colors"
                           title="Delete User"
                         >
                           <TrashIcon className="h-4 w-4" />
@@ -142,14 +142,14 @@ export default function AdminUsersPage() {
           <>
             <button
               onClick={() => setDeleteModal(null)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm font-medium text-light bg-dark-primary border border-border-strong hover:border-light/20 rounded-lg transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleDelete}
               disabled={actionLoading}
-              className="px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-500 rounded-lg transition-colors disabled:opacity-50"
             >
               Delete
             </button>
@@ -158,7 +158,7 @@ export default function AdminUsersPage() {
       >
         <p>
           Are you sure you want to delete{' '}
-          <strong>{deleteModal?.username}</strong>? This action cannot be undone.
+          <strong className="text-light">{deleteModal?.username}</strong>? This action cannot be undone.
         </p>
       </Modal>
     </div>

@@ -51,8 +51,8 @@ function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500 mt-1">Overview of your event platform</p>
+        <h1 className="text-2xl font-bold text-light">Dashboard</h1>
+        <p className="text-light-muted mt-1">Overview of your event platform</p>
       </div>
 
       {stats && (
@@ -87,26 +87,26 @@ function AdminDashboard() {
 
       {stats && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Events by Status</h3>
+          <div className="bg-dark-secondary rounded-xl border border-border-strong p-6">
+            <h3 className="font-semibold text-light mb-4">Events by Status</h3>
             <div className="space-y-3">
               {Object.entries(stats.events.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
                   <Badge value={status} />
-                  <span className="font-medium text-slate-700">{count as number}</span>
+                  <span className="font-medium text-light-muted">{count as number}</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">
+          <div className="bg-dark-secondary rounded-xl border border-border-strong p-6">
+            <h3 className="font-semibold text-light mb-4">
               Reservations by Status
             </h3>
             <div className="space-y-3">
               {Object.entries(stats.reservations.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
                   <Badge value={status} />
-                  <span className="font-medium text-slate-700">{count as number}</span>
+                  <span className="font-medium text-light-muted">{count as number}</span>
                 </div>
               ))}
             </div>
@@ -114,17 +114,17 @@ function AdminDashboard() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200">
-        <div className="flex items-center justify-between p-6 border-b border-slate-100">
-          <h3 className="font-semibold text-slate-900">Recent Reservations</h3>
+      <div className="bg-dark-secondary rounded-xl border border-border-strong">
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h3 className="font-semibold text-light">Recent Reservations</h3>
           <Link
             href="/dashboard/reservations"
-            className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+            className="text-sm text-accent hover:text-accent-hover flex items-center gap-1 transition-colors"
           >
             View all <ArrowRightIcon className="h-4 w-4" />
           </Link>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-border">
           {recentReservations.map((r) => {
             const event = r.event as ApiEvent;
             const rUser = r.user as ApiUser;
@@ -134,10 +134,10 @@ function AdminDashboard() {
                 className="px-6 py-4 flex items-center justify-between"
               >
                 <div>
-                  <p className="font-medium text-sm text-slate-900">
+                  <p className="font-medium text-sm text-light">
                     {event?.title || 'Unknown Event'}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-light-muted">
                     {rUser?.username || rUser?.email || 'Unknown User'}
                   </p>
                 </div>
@@ -146,7 +146,7 @@ function AdminDashboard() {
             );
           })}
           {recentReservations.length === 0 && (
-            <p className="px-6 py-8 text-sm text-slate-500 text-center">
+            <p className="px-6 py-8 text-sm text-light-muted text-center">
               No reservations yet.
             </p>
           )}
@@ -196,8 +196,8 @@ function ParticipantDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">My Dashboard</h1>
-        <p className="text-slate-500 mt-1">Your reservations at a glance</p>
+        <h1 className="text-2xl font-bold text-light">My Dashboard</h1>
+        <p className="text-light-muted mt-1">Your reservations at a glance</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -227,17 +227,17 @@ function ParticipantDashboard() {
         />
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200">
-        <div className="flex items-center justify-between p-6 border-b border-slate-100">
-          <h3 className="font-semibold text-slate-900">Upcoming Events</h3>
+      <div className="bg-dark-secondary rounded-xl border border-border-strong">
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h3 className="font-semibold text-light">Upcoming Events</h3>
           <Link
             href="/dashboard/reservations"
-            className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+            className="text-sm text-accent hover:text-accent-hover flex items-center gap-1 transition-colors"
           >
             All reservations <ArrowRightIcon className="h-4 w-4" />
           </Link>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-border">
           {upcoming.slice(0, 5).map((r) => {
             const event = r.event as ApiEvent;
             return (
@@ -246,10 +246,10 @@ function ParticipantDashboard() {
                 className="px-6 py-4 flex items-center justify-between"
               >
                 <div>
-                  <p className="font-medium text-sm text-slate-900">
+                  <p className="font-medium text-sm text-light">
                     {event?.title || 'Unknown Event'}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-light-muted">
                     {event?.date
                       ? new Date(event.date).toLocaleDateString('en-US', {
                           month: 'short',
@@ -265,10 +265,10 @@ function ParticipantDashboard() {
           })}
           {upcoming.length === 0 && (
             <div className="px-6 py-8 text-center">
-              <p className="text-sm text-slate-500">No upcoming events.</p>
+              <p className="text-sm text-light-muted">No upcoming events.</p>
               <Link
                 href="/"
-                className="text-sm text-indigo-600 hover:text-indigo-700 mt-2 inline-block"
+                className="text-sm text-accent hover:text-accent-hover mt-2 inline-block"
               >
                 Browse events &rarr;
               </Link>

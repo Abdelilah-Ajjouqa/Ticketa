@@ -11,10 +11,10 @@ export default function EmptyState({ title, description, action, icon }: EmptySt
   return (
     <div className="text-center py-12">
       <div className="flex justify-center mb-4">
-        {icon || <InboxIcon className="h-12 w-12 text-slate-300" />}
+        {icon || <InboxIcon className="h-12 w-12 text-light-muted/30" />}
       </div>
-      <h3 className="text-sm font-medium text-slate-900">{title}</h3>
-      {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+      <h3 className="text-sm font-medium text-light">{title}</h3>
+      {description && <p className="mt-1 text-sm text-light-muted">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   );

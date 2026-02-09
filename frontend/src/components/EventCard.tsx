@@ -16,25 +16,25 @@ export default function EventCard({ event, showStatus = false }: EventCardProps)
 
   return (
     <Link href={`/events/${event._id}`} className="group block">
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-200">
+      <div className="bg-dark-secondary rounded-xl border border-border-strong overflow-hidden hover:border-accent/30 transition-all duration-300">
         {/* Color bar */}
-        <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500" />
+        <div className="h-1 bg-gradient-to-r from-accent to-accent/40" />
 
         <div className="p-5">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+            <h3 className="font-semibold text-light group-hover:text-accent transition-colors line-clamp-1">
               {event.title}
             </h3>
             {showStatus && <Badge value={event.status} />}
           </div>
 
-          <p className="mt-2 text-sm text-slate-500 line-clamp-2">
+          <p className="mt-2 text-sm text-light-muted line-clamp-2">
             {event.description}
           </p>
 
           <div className="mt-4 space-y-2">
-            <div className="flex items-center text-sm text-slate-500">
-              <CalendarIcon className="h-4 w-4 mr-2 text-slate-400" />
+            <div className="flex items-center text-sm text-light-muted">
+              <CalendarIcon className="h-4 w-4 mr-2 text-accent/60" />
               {new Date(event.date).toLocaleDateString('en-US', {
                 weekday: 'short',
                 month: 'short',
@@ -42,14 +42,14 @@ export default function EventCard({ event, showStatus = false }: EventCardProps)
                 year: 'numeric',
               })}
             </div>
-            <div className="flex items-center text-sm text-slate-500">
-              <MapPinIcon className="h-4 w-4 mr-2 text-slate-400" />
+            <div className="flex items-center text-sm text-light-muted">
+              <MapPinIcon className="h-4 w-4 mr-2 text-accent/60" />
               {event.location}
             </div>
-            <div className="flex items-center text-sm text-slate-500">
-              <TicketIcon className="h-4 w-4 mr-2 text-slate-400" />
+            <div className="flex items-center text-sm text-light-muted">
+              <TicketIcon className="h-4 w-4 mr-2 text-accent/60" />
               {isSoldOut ? (
-                <span className="text-rose-600 font-medium">Sold Out</span>
+                <span className="text-rose-400 font-medium">Sold Out</span>
               ) : (
                 <span>{event.availableTickets} tickets left</span>
               )}
@@ -58,23 +58,23 @@ export default function EventCard({ event, showStatus = false }: EventCardProps)
 
           {/* Ticket progress bar */}
           <div className="mt-3">
-            <div className="w-full bg-slate-100 rounded-full h-1.5">
+            <div className="w-full bg-dark-primary rounded-full h-1.5">
               <div
                 className={`h-1.5 rounded-full transition-all ${
                   ticketPercent > 80
                     ? 'bg-rose-500'
                     : ticketPercent > 50
                     ? 'bg-amber-500'
-                    : 'bg-emerald-500'
+                    : 'bg-accent'
                 }`}
                 style={{ width: `${ticketPercent}%` }}
               />
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between pt-4 border-t border-slate-100">
-            <span className="text-lg font-bold text-slate-900">${event.price}</span>
-            <span className="text-sm font-medium text-indigo-600 group-hover:text-indigo-700">
+          <div className="mt-4 flex items-center justify-between pt-4 border-t border-border">
+            <span className="text-lg font-bold text-light">${event.price}</span>
+            <span className="text-sm font-medium text-accent group-hover:translate-x-0.5 transition-transform">
               View Details &rarr;
             </span>
           </div>
