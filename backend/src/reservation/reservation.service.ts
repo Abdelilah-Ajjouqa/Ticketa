@@ -45,7 +45,9 @@ export class ReservationService {
       status: { $in: [ReservationStatus.PENDING, ReservationStatus.CONFIRMED] },
     } as any);
     if (existingReservation) {
-      throw new BadRequestException('You already have an active reservation for this event');
+      throw new BadRequestException(
+        'You already have an active reservation for this event',
+      );
     }
 
     const updatedEvent = await this.eventModel.findOneAndUpdate(
@@ -108,9 +110,7 @@ export class ReservationService {
     if (filters?.eventId) query.event = filters.eventId;
     if (filters?.status) query.status = filters.status;
 
-    return this.reservationModel
-      .find(query as any)
-      .populate('event');
+    return this.reservationModel.find(query as any).populate('event');
   }
 
   async findOne(id: string, userId?: string, role?: string) {
@@ -121,7 +121,12 @@ export class ReservationService {
     if (!reservation) throw new NotFoundException('Reservation not found');
 
     // Ownership check: participants can only see their own reservations
-    if (role && role !== 'admin' && userId && String((reservation.user as any)._id || reservation.user) !== userId) {
+    if (
+      role &&
+      role !== 'admin' &&
+      userId &&
+      String((reservation.user as unknown as { _id: string })._id) !== userId
+    ) {
       throw new BadRequestException('You cannot access this reservation');
     }
 
@@ -169,7 +174,7 @@ export class ReservationService {
     // Only Admin or the owner can cancel
     if (
       role !== 'admin' &&
-      String(reservation.user) !== userId
+      String(reservation.user as unknown as string) !== userId
     ) {
       throw new BadRequestException('You cannot cancel this reservation');
     }
@@ -188,7 +193,11 @@ export class ReservationService {
     return reservation.save();
   }
 
-  async generateTicketPdf(reservationId: string, userId?: string, role?: string): Promise<Buffer> {
+  async generateTicketPdf(
+    reservationId: string,
+    userId?: string,
+    role?: string,
+  ): Promise<Buffer> {
     const reservation = await this.reservationModel
       .findById(reservationId)
       .populate('event')
@@ -198,7 +207,12 @@ export class ReservationService {
     }
 
     // Ownership check
-    if (role && role !== 'admin' && userId && String((reservation.user as any)._id || reservation.user) !== userId) {
+    if (
+      role &&
+      role !== 'admin' &&
+      userId &&
+      String((reservation.user as unknown as { _id: string })._id) !== userId
+    ) {
       throw new BadRequestException('You cannot access this reservation');
     }
 

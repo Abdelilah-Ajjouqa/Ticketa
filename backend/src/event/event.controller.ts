@@ -64,7 +64,9 @@ export class EventController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get a single event by ID including drafts (Admin)' })
+  @ApiOperation({
+    summary: 'Get a single event by ID including drafts (Admin)',
+  })
   findOneAdmin(@Param('id') id: string) {
     return this.eventService.findOne(id, true);
   }

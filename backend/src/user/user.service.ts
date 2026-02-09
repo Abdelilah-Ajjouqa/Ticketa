@@ -26,7 +26,9 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return await this.usermodel.findByIdAndUpdate(id, updateUserDto, { new: true }).select('-password');
+    return await this.usermodel
+      .findByIdAndUpdate(id, updateUserDto, { new: true })
+      .select('-password');
   }
 
   async remove(id: string) {

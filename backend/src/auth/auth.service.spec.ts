@@ -65,14 +65,24 @@ describe('AuthService', () => {
         ...mockUser,
         email: registerDto.email,
         username: registerDto.username,
-        toObject: function () { return { ...this }; },
+        toObject: function () {
+          return { ...this };
+        },
       };
       delete (createdUser as any).toObject;
       const createdUserWithToObject = {
         ...mockUser,
         email: registerDto.email,
         username: registerDto.username,
-        toObject() { return { _id: this._id, email: this.email, username: this.username, password: this.password, role: this.role }; },
+        toObject() {
+          return {
+            _id: this._id,
+            email: this.email,
+            username: this.username,
+            password: this.password,
+            role: this.role,
+          };
+        },
       };
       userService.create.mockResolvedValue(createdUserWithToObject as any);
 
@@ -115,7 +125,15 @@ describe('AuthService', () => {
     it('should login and return user with access token (no password)', async () => {
       const mockUserWithToObject = {
         ...mockUser,
-        toObject() { return { _id: mockUser._id, email: mockUser.email, username: mockUser.username, password: mockUser.password, role: mockUser.role }; },
+        toObject() {
+          return {
+            _id: mockUser._id,
+            email: mockUser.email,
+            username: mockUser.username,
+            password: mockUser.password,
+            role: mockUser.role,
+          };
+        },
       };
       userService.findByEmail.mockResolvedValue(mockUserWithToObject as any);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
@@ -154,7 +172,15 @@ describe('AuthService', () => {
     it('should return the current user data with access token (no password)', async () => {
       const mockUserWithToObject = {
         ...mockUser,
-        toObject() { return { _id: mockUser._id, email: mockUser.email, username: mockUser.username, password: mockUser.password, role: mockUser.role }; },
+        toObject() {
+          return {
+            _id: mockUser._id,
+            email: mockUser.email,
+            username: mockUser.username,
+            password: mockUser.password,
+            role: mockUser.role,
+          };
+        },
       };
       userService.findOne.mockResolvedValue(mockUserWithToObject as any);
 

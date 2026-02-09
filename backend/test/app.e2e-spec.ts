@@ -162,9 +162,7 @@ describe('Ticketa E2E – Full Booking Flow', () => {
   // 7. Public listing – draft event not visible
   // ──────────────────────────────────────────────
   it('GET /events – draft events hidden from public', async () => {
-    const res = await request(app.getHttpServer())
-      .get('/events')
-      .expect(200);
+    const res = await request(app.getHttpServer()).get('/events').expect(200);
 
     const ids = res.body.map((e: any) => e._id);
     expect(ids).not.toContain(eventId);
@@ -186,9 +184,7 @@ describe('Ticketa E2E – Full Booking Flow', () => {
   // 9. Public listing – published event visible
   // ──────────────────────────────────────────────
   it('GET /events – published event now visible', async () => {
-    const res = await request(app.getHttpServer())
-      .get('/events')
-      .expect(200);
+    const res = await request(app.getHttpServer()).get('/events').expect(200);
 
     const ids = res.body.map((e: any) => e._id);
     expect(ids).toContain(eventId);

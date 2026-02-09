@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from './schema/event.schema';
@@ -7,6 +11,17 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { EventStatus } from 'src/common/enums/event-status.enum';
 import { AuthenticatedUser } from 'src/common/interfaces/auth.interface';
 import { Reservation } from 'src/reservation/schema/reservation.schema';
+
+interface AggregateCount {
+  _id: string;
+  count: number;
+}
+
+interface FillRateResult {
+  _id: null;
+  totalTickets: number;
+  availableTickets: number;
+}
 
 @Injectable()
 export class EventService {
@@ -94,7 +109,7 @@ export class EventService {
     const now = new Date();
 
     // Event counts by status
-    const eventsByStatus = await this.eventModel.aggregate([
+    const eventsByStatus: AggregateCount[] = await this.eventModel.aggregate([
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]);
 
@@ -112,7 +127,7 @@ export class EventService {
     });
 
     // Fill rate across published events
-    const fillRateResult = await this.eventModel.aggregate([
+    const fillRateResult: FillRateResult[] = await this.eventModel.aggregate([
       { $match: { status: EventStatus.PUBLISHED } },
       {
         $group: {
@@ -126,13 +141,16 @@ export class EventService {
     let fillRate = 0;
     if (fillRateResult.length > 0 && fillRateResult[0].totalTickets > 0) {
       const { totalTickets, availableTickets } = fillRateResult[0];
-      fillRate = Math.round(((totalTickets - availableTickets) / totalTickets) * 10000) / 100;
+      fillRate =
+        Math.round(((totalTickets - availableTickets) / totalTickets) * 10000) /
+        100;
     }
 
     // Reservation status distribution
-    const reservationsByStatus = await this.reservationModel.aggregate([
-      { $group: { _id: '$status', count: { $sum: 1 } } },
-    ]);
+    const reservationsByStatus: AggregateCount[] =
+      await this.reservationModel.aggregate([
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]);
 
     const reservationStatusMap: Record<string, number> = {};
     let totalReservations = 0;

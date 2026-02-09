@@ -23,9 +23,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const exceptionResponse = exception.getResponse();
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+      } else if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null
+      ) {
         const resp = exceptionResponse as Record<string, unknown>;
-        message = (resp.message as string | string[]) || (resp.error as string) || 'Error';
+        message =
+          (resp.message as string | string[]) ||
+          (resp.error as string) ||
+          'Error';
       }
     }
     // Mongoose CastError (invalid ObjectId)
@@ -36,7 +42,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Mongoose ValidationError
     else if (exception instanceof MongooseError.ValidationError) {
       status = HttpStatus.BAD_REQUEST;
-      const messages = Object.values(exception.errors).map((err) => err.message);
+      const messages = Object.values(exception.errors).map(
+        (err) => err.message,
+      );
       message = messages.length === 1 ? messages[0] : messages;
     }
     // MongoDB duplicate key error (code 11000)
