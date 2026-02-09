@@ -32,6 +32,7 @@ export class Event {
     required: true,
     enum: EventStatus,
     default: EventStatus.DRAFT,
+    type: String,
   })
   status: EventStatus;
 

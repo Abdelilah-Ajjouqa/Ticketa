@@ -15,4 +15,4 @@ import { Event, EventSchema } from 'src/event/schema/event.schema';
   controllers: [ReservationController],
   providers: [ReservationService],
 })
-export class ReservationModule { }
+export class ReservationModule {}

@@ -1,21 +1,19 @@
 
-# Base image
+# ── Stage 1: Build ──
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies (incorporating bcrypt build dependencies if needed, though pure js bcryptjs is preferred if native fails, but we assume environment matches)
-# For alpine, sometimes we need python3 make g++ for native modules
-# RUN apk add --no-cache python3 make g++
+# bcrypt needs native compilation on Alpine
+RUN apk add --no-cache python3 make g++
 
 COPY package*.json ./
 RUN npm ci
 
 COPY . .
-
 RUN npm run build
 
-# Production image
+# ── Stage 2: Production ──
 FROM node:20-alpine
 
 WORKDIR /app
