@@ -52,7 +52,7 @@ export default function EventDetailsPage() {
       await api.post('/reservations', { eventId: event._id });
       setMessage({
         type: 'success',
-        text: 'Reservation created! Check your dashboard for status.',
+        text: 'Reservation created',
       });
       setEvent({ ...event, availableTickets: event.availableTickets - 1 });
     } catch (err) {

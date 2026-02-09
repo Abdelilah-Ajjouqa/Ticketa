@@ -45,10 +45,6 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-muted text-accent text-sm font-medium mb-6">
-              <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-              Live Events
-            </div>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-light">
               Discover Amazing{' '}
               <span className="text-accent">Events</span>

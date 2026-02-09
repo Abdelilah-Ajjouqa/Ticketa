@@ -70,7 +70,7 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={(e) => update('username', e.target.value)}
                 className="w-full px-3 py-2 bg-dark-primary border border-border-strong rounded-lg text-sm text-light placeholder-light-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition"
-                placeholder="johndoe"
+                placeholder="set your username"
               />
             </div>
 

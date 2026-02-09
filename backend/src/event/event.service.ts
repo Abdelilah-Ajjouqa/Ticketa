@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from './schema/event.schema';
@@ -16,6 +16,21 @@ export class EventService {
   ) {}
 
   async create(createEventDto: CreateEventDto, user: AuthenticatedUser) {
+    const duplicate = await this.eventModel.findOne({
+      title: createEventDto.title,
+      description: createEventDto.description,
+      date: new Date(createEventDto.date),
+      location: createEventDto.location,
+      totalTickets: createEventDto.totalTickets,
+      price: createEventDto.price,
+    });
+
+    if (duplicate) {
+      throw new ConflictException(
+        'An event with the exact same details already exists',
+      );
+    }
+
     const newEvent = new this.eventModel({
       ...createEventDto,
       availableTickets: createEventDto.totalTickets,

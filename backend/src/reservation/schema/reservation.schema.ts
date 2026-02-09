@@ -24,9 +24,6 @@ export class Reservation {
     default: ReservationStatus.PENDING,
   })
   status: ReservationStatus;
-
-  @Prop({ unique: true })
-  ticketCode: string;
 }
 
 export const ReservationSchema = SchemaFactory.createForClass(Reservation);

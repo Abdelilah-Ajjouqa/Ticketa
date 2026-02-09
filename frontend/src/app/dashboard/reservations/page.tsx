@@ -160,9 +160,6 @@ export default function ReservationsPage() {
                     Status
                   </th>
                   <th className="text-left px-6 py-3 font-medium text-light-muted">
-                    Ticket Code
-                  </th>
-                  <th className="text-left px-6 py-3 font-medium text-light-muted">
                     Date
                   </th>
                   <th className="text-right px-6 py-3 font-medium text-light-muted">
@@ -196,9 +193,6 @@ export default function ReservationsPage() {
                       )}
                       <td className="px-6 py-4">
                         <Badge value={r.status} />
-                      </td>
-                      <td className="px-6 py-4 text-light-muted font-mono text-xs">
-                        {r.ticketCode || '\u2014'}
                       </td>
                       <td className="px-6 py-4 text-light-muted">
                         {new Date(r.createdAt).toLocaleDateString()}

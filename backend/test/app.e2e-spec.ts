@@ -205,7 +205,6 @@ describe('Ticketa E2E – Full Booking Flow', () => {
       .expect(201);
 
     expect(res.body.status).toBe('pending');
-    expect(res.body).toHaveProperty('ticketCode');
     reservationId = res.body._id;
   });
 

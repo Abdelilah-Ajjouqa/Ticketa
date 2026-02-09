@@ -72,7 +72,6 @@ export class ReservationService {
       const reservation = new this.reservationModel({
         event: eventId,
         user: userId,
-        ticketCode: `${eventId}-${userId}-${Date.now()}`,
         status: ReservationStatus.PENDING,
       });
       return await reservation.save();
@@ -233,12 +232,6 @@ export class ReservationService {
     const user = reservation.user as unknown as PopulatedUser;
     doc.text(`Attendee: ${user.username} (${user.email})`);
     doc.moveDown();
-
-    // Ticket Code
-    doc
-      .fontSize(16)
-      .fillColor('blue')
-      .text(`Ticket Code: ${reservation.ticketCode}`, { align: 'center' });
 
     doc.end();
 

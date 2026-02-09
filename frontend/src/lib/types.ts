@@ -27,7 +27,6 @@ export interface ApiReservation {
   event: string | ApiEvent;
   user: string | ApiUser;
   status: 'pending' | 'confirmed' | 'refused' | 'cancelled';
-  ticketCode: string;
   createdAt: string;
   updatedAt: string;
 }
