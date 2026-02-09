@@ -17,14 +17,13 @@ export class AuthService {
   ) {}
 
   private async createToken(user: {
-    _id?: unknown;
-    id?: unknown;
+    _id: unknown;
     email: string;
     username: string;
     role: string;
   }) {
     const payload: JwtPayload = {
-      sub: String(user._id || user.id),
+      sub: String(user._id),
       email: user.email,
       username: user.username,
       role: user.role as JwtPayload['role'],
@@ -83,6 +82,10 @@ export class AuthService {
 
     if (!userData) throw new HttpException('User not found', 404);
 
-    return userData;
+    const accessToken = await this.createToken(userData);
+    const userObj = userData.toObject ? userData.toObject() : userData;
+    const { password: _pw, ...userWithoutPassword } = userObj;
+
+    return { user: userWithoutPassword, accessToken };
   }
 }

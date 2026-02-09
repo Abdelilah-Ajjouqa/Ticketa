@@ -59,29 +59,26 @@ function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Events"
-            value={stats.totalEvents}
+            value={stats.events.total}
             icon={<CalendarDaysIcon className="h-6 w-6" />}
             color="indigo"
           />
           <StatsCard
             title="Upcoming Events"
-            value={stats.upcomingEvents}
+            value={stats.events.upcoming}
             icon={<ChartBarIcon className="h-6 w-6" />}
             color="emerald"
           />
           <StatsCard
             title="Fill Rate"
-            value={`${Math.round(stats.fillRate)}%`}
+            value={`${Math.round(stats.events.fillRate)}%`}
             icon={<TicketIcon className="h-6 w-6" />}
             trend="Tickets sold vs total"
             color="amber"
           />
           <StatsCard
             title="Total Reservations"
-            value={Object.values(stats.reservationsByStatus).reduce(
-              (a, b) => a + b,
-              0
-            )}
+            value={stats.reservations.total}
             icon={<CurrencyDollarIcon className="h-6 w-6" />}
             color="violet"
           />
@@ -93,7 +90,7 @@ function AdminDashboard() {
           <div className="bg-white rounded-xl border border-slate-200 p-6">
             <h3 className="font-semibold text-slate-900 mb-4">Events by Status</h3>
             <div className="space-y-3">
-              {Object.entries(stats.eventsByStatus).map(([status, count]) => (
+              {Object.entries(stats.events.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
                   <Badge value={status} />
                   <span className="font-medium text-slate-700">{count as number}</span>
@@ -106,7 +103,7 @@ function AdminDashboard() {
               Reservations by Status
             </h3>
             <div className="space-y-3">
-              {Object.entries(stats.reservationsByStatus).map(([status, count]) => (
+              {Object.entries(stats.reservations.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
                   <Badge value={status} />
                   <span className="font-medium text-slate-700">{count as number}</span>

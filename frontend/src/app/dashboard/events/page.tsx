@@ -21,6 +21,7 @@ import type { ApiEvent } from '@/lib/types';
 
 export default function AdminEventsPage() {
   const user = useAppSelector((state) => state.auth.user);
+  const authLoading = useAppSelector((state) => state.auth.loading);
   const router = useRouter();
   const [events, setEvents] = useState<ApiEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,13 +29,14 @@ export default function AdminEventsPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user && user.role !== 'admin') {
+    if (authLoading) return;
+    if (!user || user.role !== 'admin') {
       router.push('/dashboard');
       return;
     }
     fetchEvents();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchEvents = async () => {
     try {

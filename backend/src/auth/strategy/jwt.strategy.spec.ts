@@ -1,5 +1,6 @@
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
@@ -18,7 +19,7 @@ describe('JwtStrategy', () => {
         sub: '507f1f77bcf86cd799439011',
         email: 'test@example.com',
         username: 'testuser',
-        role: 'participant',
+        role: UserRole.PARTICIPANT,
       };
 
       const result = strategy.validate(payload);

@@ -33,9 +33,14 @@ export interface ApiReservation {
 }
 
 export interface EventStats {
-  totalEvents: number;
-  eventsByStatus: Record<string, number>;
-  upcomingEvents: number;
-  fillRate: number;
-  reservationsByStatus: Record<string, number>;
+  events: {
+    total: number;
+    byStatus: Record<string, number>;
+    upcoming: number;
+    fillRate: number;
+  };
+  reservations: {
+    total: number;
+    byStatus: Record<string, number>;
+  };
 }

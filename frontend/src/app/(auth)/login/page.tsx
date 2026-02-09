@@ -26,11 +26,11 @@ function LoginForm() {
       const res = await api.post('/auth/login', { email, password });
       const token = res.data.accessToken;
 
-      const profileRes = await api.get('/auth/profile', {
+      const profileRes = await api.get('/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      dispatch(setCredentials({ user: profileRes.data, token }));
+      dispatch(setCredentials({ user: profileRes.data.user, token: profileRes.data.accessToken }));
       router.push(redirect || '/');
     } catch (err) {
       setError(getErrorMessage(err, 'Login failed'));
