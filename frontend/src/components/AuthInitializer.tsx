@@ -13,10 +13,10 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const res = await api.get('/auth/profile', {
+                    const res = await api.get('/auth/me', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    dispatch(setCredentials({ user: res.data, token }));
+                    dispatch(setCredentials({ user: res.data.user, token: res.data.accessToken }));
                 } catch (error) {
                     console.error('Auth check failed', error);
                     localStorage.removeItem('token');
@@ -30,4 +30,4 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
     }, [dispatch]);
 
     return <>{children}</>;
-}
+}  

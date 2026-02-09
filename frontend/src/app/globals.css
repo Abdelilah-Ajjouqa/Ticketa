@@ -1,1 +1,51 @@
 @import "tailwindcss";
+
+@theme {
+  --color-dark-primary: #222831;
+  --color-dark-secondary: #393E46;
+  --color-accent: #00ADB5;
+  --color-accent-hover: #00CFD8;
+  --color-accent-muted: rgba(0, 173, 181, 0.15);
+  --color-light: #EEEEEE;
+  --color-light-muted: #B0B8C1;
+  --color-border: rgba(238, 238, 238, 0.08);
+  --color-border-strong: rgba(238, 238, 238, 0.15);
+  --color-surface: #2D333B;
+}
+
+body {
+  background-color: #222831;
+  color: #EEEEEE;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #222831;
+}
+::-webkit-scrollbar-thumb {
+  background: #393E46;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4a5060;
+}
+
+/* Input autofill for dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #393E46 inset;
+  -webkit-text-fill-color: #EEEEEE;
+  caret-color: #EEEEEE;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 173, 181, 0.3);
+  color: #EEEEEE;
+}

@@ -3,6 +3,11 @@ import StoreProvider from "@/app/StoreProvider";
 import Navbar from "@/components/Navbar";
 import AuthInitializer from "@/components/AuthInitializer";
 
+export const metadata = {
+  title: 'Ticketa - Event Booking Platform',
+  description: 'Discover and book amazing events near you',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -10,13 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-gray-100">
+      <body className="bg-dark-primary min-h-screen antialiased text-light">
         <StoreProvider>
           <AuthInitializer>
             <Navbar />
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-              {children}
-            </main>
+            {children}
           </AuthInitializer>
         </StoreProvider>
       </body>
