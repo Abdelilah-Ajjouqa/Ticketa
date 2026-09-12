@@ -30,7 +30,7 @@ describe('Ticketa E2E – Full Booking Flow', () => {
 
     // Drop the test database first to ensure a clean slate
     const conn = await mongoose.connect(`mongodb://localhost:27017/${TEST_DB}`);
-    await conn.connection.db.dropDatabase();
+    await conn.connection.db?.dropDatabase();
     await mongoose.disconnect();
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -46,7 +46,7 @@ describe('Ticketa E2E – Full Booking Flow', () => {
     // Drop the test database so E2E runs are idempotent
     const conn = mongoose.connection;
     if (conn.readyState === 1) {
-      await conn.db.dropDatabase();
+      await conn.db?.dropDatabase();
     }
     await app.close();
   });

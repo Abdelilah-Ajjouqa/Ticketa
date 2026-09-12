@@ -65,7 +65,14 @@ describe('AuthController', () => {
 
   describe('getCurrentUser', () => {
     it('should call authService.getCurrentUser with req.user', async () => {
-      const req = { user: { userId: mockUser._id, role: 'participant' } };
+      const req = {
+        user: {
+          userId: mockUser._id,
+          role: 'participant',
+          email: mockUser.email,
+          username: mockUser.username,
+        },
+      } as any;
       authService.getCurrentUser.mockResolvedValue(mockUser as any);
 
       const result = await controller.getCurrentUser(req);
