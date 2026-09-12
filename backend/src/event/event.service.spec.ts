@@ -5,6 +5,7 @@ import { Event } from './schema/event.schema';
 import { Reservation } from '../reservation/schema/reservation.schema';
 import { EventStatus } from '../common/enums/event-status.enum';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { NotificationService } from '../notification/notification.service';
 
 describe('EventService', () => {
   let service: EventService;
@@ -40,6 +41,13 @@ describe('EventService', () => {
 
     const mockReservationModel = {
       aggregate: jest.fn(),
+      find: jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue([]),
+      }),
+    };
+
+    const mockNotificationService = {
+      sendEventCancelled: jest.fn().mockResolvedValue(true),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +57,10 @@ describe('EventService', () => {
         {
           provide: getModelToken(Reservation.name),
           useValue: mockReservationModel,
+        },
+        {
+          provide: NotificationService,
+          useValue: mockNotificationService,
         },
       ],
     }).compile();

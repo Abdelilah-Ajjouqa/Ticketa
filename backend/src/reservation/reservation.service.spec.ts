@@ -5,6 +5,7 @@ import { Reservation, ReservationStatus } from './schema/reservation.schema';
 import { Event } from '../event/schema/event.schema';
 import { EventStatus } from '../common/enums/event-status.enum';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotificationService } from '../notification/notification.service';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -52,6 +53,11 @@ describe('ReservationService', () => {
 
     const mockConnection = {};
 
+    const mockNotificationService = {
+      sendReservationConfirmed: jest.fn().mockResolvedValue(true),
+      sendReservationRefused: jest.fn().mockResolvedValue(true),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ReservationService,
@@ -61,6 +67,10 @@ describe('ReservationService', () => {
         },
         { provide: getModelToken(Event.name), useValue: mockEventModel },
         { provide: getConnectionToken(), useValue: mockConnection },
+        {
+          provide: NotificationService,
+          useValue: mockNotificationService,
+        },
       ],
     }).compile();
 
@@ -239,7 +249,16 @@ describe('ReservationService', () => {
           status: ReservationStatus.CONFIRMED,
         }),
       };
-      reservationModel.findById.mockResolvedValue(resDoc);
+      const mockQuery = {
+        populate: jest.fn().mockReturnThis(),
+      };
+      mockQuery.populate
+        .mockReturnValueOnce(mockQuery)
+        .mockResolvedValueOnce(resDoc);
+      reservationModel.findById.mockReturnValue(mockQuery);
+      jest
+        .spyOn(service, 'generateTicketPdf')
+        .mockResolvedValue(Buffer.from('PDF'));
 
       const result = await service.confirm(mockReservation._id);
 
@@ -253,7 +272,13 @@ describe('ReservationService', () => {
         ...mockReservation,
         status: ReservationStatus.CONFIRMED,
       };
-      reservationModel.findById.mockResolvedValue(resDoc);
+      const mockQuery = {
+        populate: jest.fn().mockReturnThis(),
+      };
+      mockQuery.populate
+        .mockReturnValueOnce(mockQuery)
+        .mockResolvedValueOnce(resDoc);
+      reservationModel.findById.mockReturnValue(mockQuery);
 
       await expect(service.confirm(mockReservation._id)).rejects.toThrow(
         BadRequestException,
@@ -265,14 +290,20 @@ describe('ReservationService', () => {
     it('should refuse pending reservation and increment availableTickets', async () => {
       const resDoc = {
         ...mockReservation,
-        event: mockEvent._id,
+        event: mockEvent,
         status: ReservationStatus.PENDING,
         save: jest.fn().mockResolvedValue({
           ...mockReservation,
           status: ReservationStatus.REFUSED,
         }),
       };
-      reservationModel.findById.mockResolvedValue(resDoc);
+      const mockQuery = {
+        populate: jest.fn().mockReturnThis(),
+      };
+      mockQuery.populate
+        .mockReturnValueOnce(mockQuery)
+        .mockResolvedValueOnce(resDoc);
+      reservationModel.findById.mockReturnValue(mockQuery);
       eventModel.updateOne.mockResolvedValue({ modifiedCount: 1 });
 
       const result = await service.refuse(mockReservation._id);
@@ -290,7 +321,13 @@ describe('ReservationService', () => {
         ...mockReservation,
         status: ReservationStatus.REFUSED,
       };
-      reservationModel.findById.mockResolvedValue(resDoc);
+      const mockQuery = {
+        populate: jest.fn().mockReturnThis(),
+      };
+      mockQuery.populate
+        .mockReturnValueOnce(mockQuery)
+        .mockResolvedValueOnce(resDoc);
+      reservationModel.findById.mockReturnValue(mockQuery);
 
       await expect(service.refuse(mockReservation._id)).rejects.toThrow(
         BadRequestException,

@@ -6,7 +6,8 @@ import { Event, EventSchema } from './schema/event.schema';
 import {
   Reservation,
   ReservationSchema,
-} from 'src/reservation/schema/reservation.schema';
+} from '../reservation/schema/reservation.schema';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import {
       { name: Event.name, schema: EventSchema },
       { name: Reservation.name, schema: ReservationSchema },
     ]),
+    NotificationModule,
   ],
   controllers: [EventController],
   providers: [EventService],

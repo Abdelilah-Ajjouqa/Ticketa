@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
 import { ReservationModule } from './reservation/reservation.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ReservationModule } from './reservation/reservation.module';
     AuthModule,
     EventModule,
     ReservationModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

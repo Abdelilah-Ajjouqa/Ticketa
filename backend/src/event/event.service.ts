@@ -11,6 +11,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { EventStatus } from 'src/common/enums/event-status.enum';
 import { AuthenticatedUser } from 'src/common/interfaces/auth.interface';
 import { Reservation } from 'src/reservation/schema/reservation.schema';
+import { NotificationService } from '../notification/notification.service';
 
 interface AggregateCount {
   _id: string;
@@ -23,11 +24,18 @@ interface FillRateResult {
   availableTickets: number;
 }
 
+interface PopulatedAttendee {
+  _id: string;
+  username: string;
+  email: string;
+}
+
 @Injectable()
 export class EventService {
   constructor(
     @InjectModel(Event.name) private eventModel: Model<Event>,
     @InjectModel(Reservation.name) private reservationModel: Model<Reservation>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(createEventDto: CreateEventDto, user: AuthenticatedUser) {
@@ -96,7 +104,32 @@ export class EventService {
     if (!event) throw new NotFoundException('Event not found');
 
     event.status = EventStatus.CANCELED;
-    return event.save();
+    const saved = await event.save();
+
+    // Notify all active attendees
+    try {
+      const activeReservations = await this.reservationModel
+        .find({
+          event: id,
+          status: { $in: ['pending', 'confirmed'] },
+        } as any)
+        .populate('user', 'username email');
+
+      for (const res of activeReservations) {
+        const attendee = res.user as unknown as PopulatedAttendee;
+        if (attendee && attendee.email) {
+          await this.notificationService.sendEventCancelled({
+            to: attendee.email,
+            username: attendee.username || 'Attendee',
+            eventTitle: event.title,
+          });
+        }
+      }
+    } catch {
+      // Non-blocking notification
+    }
+
+    return saved;
   }
 
   async remove(id: string) {

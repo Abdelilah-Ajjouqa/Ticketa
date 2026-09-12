@@ -13,13 +13,17 @@ import { InjectConnection } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import PDFDocument from 'pdfkit';
 
+import { NotificationService } from '../notification/notification.service';
+
 interface PopulatedEvent {
+  _id: string;
   title: string;
   date: Date;
   location: string;
 }
 
 interface PopulatedUser {
+  _id: string;
   username: string;
   email: string;
 }
@@ -30,6 +34,7 @@ export class ReservationService {
     @InjectModel(Reservation.name) private reservationModel: Model<Reservation>,
     @InjectModel(Event.name) private eventModel: Model<Event>,
     @InjectConnection() private readonly connection: mongoose.Connection,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(
@@ -134,7 +139,10 @@ export class ReservationService {
   }
 
   async confirm(id: string) {
-    const reservation = await this.reservationModel.findById(id);
+    const reservation = await this.reservationModel
+      .findById(id)
+      .populate('event')
+      .populate('user', '-password');
     if (!reservation) throw new NotFoundException('Reservation not found');
 
     if (reservation.status !== ReservationStatus.PENDING) {
@@ -144,11 +152,35 @@ export class ReservationService {
     }
 
     reservation.status = ReservationStatus.CONFIRMED;
-    return reservation.save();
+    const saved = await reservation.save();
+
+    // Generate ticket PDF and send confirmation email
+    try {
+      const pdfBuffer = await this.generateTicketPdf(id);
+      const event = reservation.event as unknown as PopulatedEvent;
+      const user = reservation.user as unknown as PopulatedUser;
+      if (user?.email) {
+        await this.notificationService.sendReservationConfirmed({
+          to: user.email,
+          username: user.username || 'Attendee',
+          eventTitle: event.title,
+          eventDate: event.date,
+          eventLocation: event.location,
+          pdfBuffer,
+        });
+      }
+    } catch {
+      // Non-blocking
+    }
+
+    return saved;
   }
 
   async refuse(id: string) {
-    const reservation = await this.reservationModel.findById(id);
+    const reservation = await this.reservationModel
+      .findById(id)
+      .populate('event')
+      .populate('user', '-password');
     if (!reservation) throw new NotFoundException('Reservation not found');
 
     if (reservation.status !== ReservationStatus.PENDING) {
@@ -158,13 +190,31 @@ export class ReservationService {
     }
 
     // Release the ticket back
+    const event = reservation.event as unknown as PopulatedEvent;
+    const eventId = event?._id || (reservation.event as unknown as string);
     await this.eventModel.updateOne(
-      { _id: reservation.event },
+      { _id: eventId },
       { $inc: { availableTickets: 1 } },
     );
 
     reservation.status = ReservationStatus.REFUSED;
-    return reservation.save();
+    const saved = await reservation.save();
+
+    try {
+      const event = reservation.event as unknown as PopulatedEvent;
+      const user = reservation.user as unknown as PopulatedUser;
+      if (user?.email) {
+        await this.notificationService.sendReservationRefused({
+          to: user.email,
+          username: user.username || 'Attendee',
+          eventTitle: event?.title || 'Event',
+        });
+      }
+    } catch {
+      // Non-blocking
+    }
+
+    return saved;
   }
 
   async remove(id: string, userId: string, role: string) {
