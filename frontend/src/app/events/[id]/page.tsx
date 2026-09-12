@@ -14,12 +14,14 @@ import {
 } from '@heroicons/react/24/outline';
 import type { ApiEvent } from '@/lib/types';
 import Link from 'next/link';
+import CheckoutModal from '@/components/CheckoutModal';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
   const [event, setEvent] = useState<ApiEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter();
@@ -46,13 +48,20 @@ export default function EventDetailsPage() {
     }
     if (!event) return;
 
+    // For paid events, launch interactive checkout
+    if (event.price > 0) {
+      setCheckoutOpen(true);
+      return;
+    }
+
+    // Free event: instant direct reservation
     setBookingLoading(true);
     setMessage(null);
     try {
       await api.post('/reservations', { eventId: event._id });
       setMessage({
         type: 'success',
-        text: 'Reservation created',
+        text: 'Free reservation created successfully!',
       });
       setEvent({ ...event, availableTickets: event.availableTickets - 1 });
     } catch (err) {
@@ -206,11 +215,27 @@ export default function EventDetailsPage() {
                 ? 'Booking...'
                 : isSoldOut
                 ? 'Sold Out'
-                : 'Book Ticket'}
+                : event.price > 0
+                ? `Book Ticket • $${event.price.toFixed(2)}`
+                : 'Book Free Ticket'}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      {event && (
+        <CheckoutModal
+          open={checkoutOpen}
+          onClose={() => setCheckoutOpen(false)}
+          event={event}
+          onSuccess={() => {
+            setEvent((prev) =>
+              prev ? { ...prev, availableTickets: prev.availableTickets - 1 } : null
+            );
+          }}
+        />
+      )}
     </div>
   );
 }
