@@ -100,8 +100,8 @@ export class ReservationService {
 
     if (role === 'admin') {
       // Admin can filter by eventId, userId, status
-      if (filters?.eventId) query.event = filters.eventId;
-      if (filters?.userId) query.user = filters.userId;
+      if (filters?.eventId) query.event = new mongoose.Types.ObjectId(filters.eventId);
+      if (filters?.userId) query.user = new mongoose.Types.ObjectId(filters.userId);
       if (filters?.status) query.status = filters.status;
 
       return this.reservationModel
@@ -111,8 +111,8 @@ export class ReservationService {
     }
 
     // Participants always see only their own, optionally filtered by event/status
-    query.user = userId;
-    if (filters?.eventId) query.event = filters.eventId;
+    query.user = new mongoose.Types.ObjectId(userId);
+    if (filters?.eventId) query.event = new mongoose.Types.ObjectId(filters.eventId);
     if (filters?.status) query.status = filters.status;
 
     return this.reservationModel.find(query as any).populate('event');

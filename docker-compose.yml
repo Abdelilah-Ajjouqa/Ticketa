@@ -4,7 +4,7 @@ services:
     image: mongo:7
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27020:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3501:3000"
     environment:
       - MONGODB_URI=mongodb://mongo:27017/ticketa
       - JWT_SECRET=${JWT_SECRET:-super-secret-change-me}
@@ -35,12 +35,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:3000
+        NEXT_PUBLIC_API_URL: http://localhost:3501
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "3500:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=http://localhost:3501
     depends_on:
       - backend
 
